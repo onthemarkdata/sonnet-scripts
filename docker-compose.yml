@@ -1,16 +1,48 @@
 version: '3.8'
 
 services:
-  pgduckdb:
-    image: pgduckdb/pgduckdb:17-v0.1.0
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - pgduckdb_data:/var/lib/postgresql/data
 
-volumes:
-  pgduckdb_data:
+  pythonbase:
+    build: ./pythonbase
+    container_name: pythonbase
+    image: pythonbase
+    depends_on:
+      - linuxbase
+
+  linuxbase:
+    build: ./linuxbase
+    container_name: linuxbase
+    image: linuxbase
+
+
+#   pgduckdb:
+#     image: pgduckdb/pgduckdb:17-v0.1.0
+#     ports:
+#       - "5432:5432"
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: postgres
+#     volumes:
+#       - pgduckdb_data:/var/lib/postgresql/data
+
+#   sonnet-scripts:
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     volumes:
+#       - .:/sonnet-scripts
+#     depends_on:
+#       - pgduckdb
+#     working_dir: /sonnet-scripts
+#     entrypoint: /bin/bash
+#     stdin_open: true
+#     tty: true
+#     environment:
+#       POSTGRES_USER: postgres
+#       POSTGRES_PASSWORD: postgres
+#       POSTGRES_DB: postgres
+#       POSTGRES_HOST: postgres
+
+# volumes:
+#   pgduckdb_data:

@@ -115,7 +115,23 @@ For more information on packaging, see [Packing UV Python Projects](https://docs
 
 
 
+Adding new dependencies
+In the pyproject.toml file, add the new dependency to the `[tool.uv.dependencies]` section.
+
+```toml
+dependencies = [
+    "beautifulsoup4>=4.12.3",
+    "dbt-core>=1.9.1",
+    "duckdb>=1.1.3",
+    ...
+    "requests>=2.32.3",
+    "ruff>=0.8.6",
+    "sonnet-scripts>=0.1.0"  # <-- New packages added here
+]
+```
 
 
 
-Docker Compose
+
+MOST Recent Update: 12.7.2025
+

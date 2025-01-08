@@ -1,0 +1,4 @@
+pydantic
+flask
+ruff
+requests
