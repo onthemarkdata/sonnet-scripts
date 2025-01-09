@@ -29,24 +29,3 @@ services:
 volumes:
   pgduckdb_data:
    driver: local
-
-#   sonnet-scripts:
-#     build:
-#       context: .
-#       dockerfile: Dockerfile
-#     volumes:
-#       - .:/sonnet-scripts
-#     depends_on:
-#       - pgduckdb
-#     working_dir: /sonnet-scripts
-#     entrypoint: /bin/bash
-#     stdin_open: true
-#     tty: true
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: postgres
-#       POSTGRES_DB: postgres
-#       POSTGRES_HOST: postgres
-
-# volumes:
-#   pgduckdb_data:
