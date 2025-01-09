@@ -26,6 +26,9 @@ services:
       POSTGRES_DB: postgres
     volumes:
       - pgduckdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      retries: 5
 volumes:
   pgduckdb_data:
    driver: local

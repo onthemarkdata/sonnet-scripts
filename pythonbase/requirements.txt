@@ -2,3 +2,4 @@ pydantic
 flask
 ruff
 requests
+#psycopg2-binary
