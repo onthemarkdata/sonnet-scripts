@@ -6,6 +6,9 @@ ENV PATH=/venv/bin:$PATH
 ENV PATH=/root/.cargo/bin:$PATH
 ENV PATH="/root/.local/bin/:$PATH"
 
+# Install uv and the PostgreSQL client (`psql`)
+RUN apt-get update && apt-get install -y ca-certificates postgresql-client
+
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # set up a virtual env to use for whatever app is destined for this container.
@@ -30,3 +33,4 @@ RUN uv pip install --upgrade granian[pname]
 RUN echo "We're good:" \
 RUN /venv/bin/python --version
 
+CMD ["tail", "-f", "/dev/null"]

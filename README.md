@@ -26,18 +26,40 @@ git clone https://github.com/onthemarkdata/sonnet-scripts.git
 cd sonnet-scripts
 ```
 
-2. `make setup`
+Build and Interact with your container:
 
-3. `source .venv/bin/activate`
+`make setup` – Build the containers and start them in detached mode.
 
-4. `make update`
+`make rebuild` – Force rebuild all containers without cache and restart.
 
-Install Homebrew
-`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+`make stop` – Stop all running containers.
+
+`make exec-pythonbase` – Open a shell in the pythonbase container.
+
+`make exec-linuxbase` – Open a shell in the linuxbase container.
+
+`make exec-webapp` – Open a shell in the uv-docker-app container.
+
+`make status` – Display the status of running containers.
 
 
-Make Build?
+Accessing the postgres database within the pythonbase container:
+psql -h pgduckdb -U postgres -d postgres
+password: postgres
 
+
+
+
+
+
+
+
+
+
+
+
+
+Interacting with UV
 
 Install uv
 `brew install uv`
@@ -61,10 +83,6 @@ Update dependencies
 
 Add depdencies to pyproject.toml
 `uv add duckdb`
-
-
-
-
 
 Uninstall Package
 `uv pip uninstall duckdb`
@@ -112,26 +130,3 @@ UV Creating Project
 Packaged applications - to create a CLI that will be published to PyPI or if you want to define tests in a dedicated directory.
 `uv init --package sonnet-scripts`
 For more information on packaging, see [Packing UV Python Projects](https://docs.astral.sh/uv/concepts/projects/init/#packaged-applications)
-
-
-
-Adding new dependencies
-In the pyproject.toml file, add the new dependency to the `[tool.uv.dependencies]` section.
-
-```toml
-dependencies = [
-    "beautifulsoup4>=4.12.3",
-    "dbt-core>=1.9.1",
-    "duckdb>=1.1.3",
-    ...
-    "requests>=2.32.3",
-    "ruff>=0.8.6",
-    "sonnet-scripts>=0.1.0"  # <-- New packages added here
-]
-```
-
-
-
-
-MOST Recent Update: 12.7.2025
-

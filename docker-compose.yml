@@ -15,16 +15,20 @@ services:
     image: linuxbase
 
 
-#   pgduckdb:
-#     image: pgduckdb/pgduckdb:17-v0.1.0
-#     ports:
-#       - "5432:5432"
-#     environment:
-#       POSTGRES_USER: postgres
-#       POSTGRES_PASSWORD: postgres
-#       POSTGRES_DB: postgres
-#     volumes:
-#       - pgduckdb_data:/var/lib/postgresql/data
+  pgduckdb:
+    image: pgduckdb/pgduckdb:17-v0.1.0
+    container_name: pgduckdb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - pgduckdb_data:/var/lib/postgresql/data
+volumes:
+  pgduckdb_data:
+   driver: local
 
 #   sonnet-scripts:
 #     build:
