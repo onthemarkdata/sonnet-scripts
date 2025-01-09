@@ -44,8 +44,9 @@ Build and Interact with your container:
 
 
 Accessing the postgres database within the pythonbase container:
-psql -h pgduckdb -U postgres -d postgres
-password: postgres
+`psql -h pgduckdb -U postgres -d postgres` 
+
+`password: postgres`
 
 ____________________________________________________________________________________
 ____________________________________________________________________________________
