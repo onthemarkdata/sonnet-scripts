@@ -11,7 +11,11 @@ ENV PATH="/root/.local/bin/:$PATH"
 RUN apt-get update && apt-get install -y ca-certificates postgresql-client
 
 # Download UV
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
+    && curl -O https://dl.min.io/client/mc/release/linux-amd64/mc \
+    && chmod +x mc \
+    && mv mc /usr/local/bin/
+
 
 # Set up a virtual env to use for whatever app is destined for this container.
 RUN uv venv --python 3.12.6 /venv
