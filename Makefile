@@ -16,6 +16,12 @@ stop:
 exec-pythonbase:
 	@docker compose exec pythonbase bash
 
+load-db:
+	@docker compose exec pythonbase python /apps/ingest_claims/load_claims_to_db.py
+
+verify-db:
+	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
+
 # # Execute a shell inside the linuxbase container
 # exec-linuxbase:
 # 	@docker compose exec linuxbase bash

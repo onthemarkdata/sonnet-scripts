@@ -23,6 +23,8 @@ RUN uv venv --python 3.12.6 /venv
 RUN echo "\nsource /venv/bin/activate\n" >> /root/.zshrc
 RUN uv --version
 
+# Copy ingestion to pythonbase container
+COPY ingest_claims /apps/ingest_claims
 
 # Copy requirements to pythonbase container
 COPY requirements.txt /apps/requirements.txt
