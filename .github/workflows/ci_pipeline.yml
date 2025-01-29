@@ -42,8 +42,8 @@ jobs:
 
       - name: Build Docker Images
         run: |
-          docker build -t pythonbase pythonbase
           docker build -t linuxbase linuxbase
+          docker build -t pythonbase pythonbase
 
       - name: Start Docker Compose
         run: docker compose up -d --build  # Ensures it uses local builds
