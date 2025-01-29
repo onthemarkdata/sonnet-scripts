@@ -34,4 +34,14 @@ status:
 clean:
 	@docker compose down -v --rmi all --remove-orphans
 
+# Run all tests inside the container
+test:
+	@docker compose exec pythonbase pytest /apps/tests
 
+# Run only unit tests
+test-unit:
+	@docker compose exec pythonbase pytest /apps/tests/unit
+
+# Run only integration tests
+test-integration:
+	@docker compose exec pythonbase pytest /apps/tests/integration

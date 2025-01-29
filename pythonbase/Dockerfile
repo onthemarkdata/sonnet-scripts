@@ -36,6 +36,8 @@ RUN uv pip install --upgrade -r /apps/requirements.txt \
 
 RUN uv pip install --upgrade granian[pname]
 
+COPY tests /apps/tests
+
 RUN echo "We're good:" \
 RUN /venv/bin/python --version
 

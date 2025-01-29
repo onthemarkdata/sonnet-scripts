@@ -4,7 +4,7 @@ import zipfile
 
 import pandas as pd
 
-from db_utils import connect_to_db, create_claims_table, copy_csv_to_db
+from ingest_claims.db_utils import connect_to_db, create_claims_table, copy_csv_to_db
 
 url = "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip"
 

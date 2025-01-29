@@ -27,3 +27,6 @@ jobs:
       
       - name: Lint Python Code
         run: flake8 /apps || echo "Linting warnings"
+      
+      - name: Run Tests
+        run: make test

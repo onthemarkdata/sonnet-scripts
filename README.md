@@ -135,3 +135,31 @@ UV Creating Project
 Packaged applications - to create a CLI that will be published to PyPI or if you want to define tests in a dedicated directory.
 `uv init --package sonnet-scripts`
 For more information on packaging, see [Packing UV Python Projects](https://docs.astral.sh/uv/concepts/projects/init/#packaged-applications)
+
+
+
+🎉 All Unit Tests Passed! Next Up: Integration Tests 🚀
+Now that unit tests are 100% passing, let's move on to integration testing.
+
+🔍 What’s Different About Integration Tests?
+Unlike unit tests, integration tests:
+
+Test multiple components working together.
+Often require real databases, APIs, or file systems.
+Ensure that end-to-end workflows function correctly.
+🛠 Step 1: Define What to Test in Integration Tests
+Since we’ve unit-tested individual functions, our integration tests should focus on full workflows, such as:
+
+Database Operations
+
+✅ Connect to the database.
+✅ Create and populate tables.
+✅ Query data from tables.
+Data Pipeline
+
+✅ Download the file.
+✅ Extract it.
+✅ Load it into the database.
+End-to-End Run (main() in load_claims_to_db.py)
+
+✅ Run the entire process and verify that data exists in the database.
