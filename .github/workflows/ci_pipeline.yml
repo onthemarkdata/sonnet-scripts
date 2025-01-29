@@ -13,20 +13,35 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
-      
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.12"
-        
-      - name: Install dependencies
+
+      - name: Install Dependencies
         run: pip install -r pythonbase/requirements.txt
-      
-      - name: Lint Python Code
-        run: flake8 /apps || echo "Linting warnings"
-      
+
+      - name: Start Docker Compose
+        run: docker compose up -d  # Make sure the services start
+
       - name: Run Tests
         run: make test
