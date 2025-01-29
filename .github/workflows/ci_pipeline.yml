@@ -40,8 +40,24 @@ jobs:
       - name: Install Dependencies
         run: pip install -r pythonbase/requirements.txt
 
+      - name: Build Docker Images
+        run: |
+          docker build -t pythonbase pythonbase
+          docker build -t linuxbase linuxbase
+
       - name: Start Docker Compose
-        run: docker compose up -d  # Make sure the services start
+        run: docker compose up -d --build  # Ensures it uses local builds
+
+      - name: Wait for PostgreSQL to be Ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          until docker exec $(docker ps -q -f name=postgres) pg_isready -U postgres; do
+            sleep 3
+          done
+          echo "PostgreSQL is ready!"
 
       - name: Run Tests
         run: make test
+
+      - name: Stop Docker Compose
+        run: docker compose down
