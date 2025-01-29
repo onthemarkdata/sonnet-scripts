@@ -16,23 +16,47 @@ stop:
 exec-pythonbase:
 	@docker compose exec pythonbase bash
 
+# Execute a PostgreSQL shell
+exec-postgres:
+	@docker compose exec pgduckdb psql -U postgres -d postgres
+
+# Execute a DuckDB shell
+exec-duckdb:
+	@docker compose exec pgduckdb duckdb
+
+# Execute a shell inside the linuxbase container
+exec-linuxbase:
+	@docker compose exec linuxbase bash
+
+# Load data into PostgreSQL
 load-db:
 	@docker compose exec pythonbase python /apps/ingest_claims/load_claims_to_db.py
 
+# Verify data in PostgreSQL
 verify-db:
 	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
 
-# # Execute a shell inside the linuxbase container
-# exec-linuxbase:
-# 	@docker compose exec linuxbase bash
 
 # Check the running containers
 status:
 	@docker compose ps
 
+# Show logs of all containers or a specific one
+logs:
+	@docker compose logs -f $(c)
+
 # Clean up containers, volumes, and images
 clean:
 	@docker compose down -v --rmi all --remove-orphans
+
+# Backup the PostgreSQL database
+backup-db:
+	@docker compose exec pgduckdb pg_dump -U postgres -d postgres > backup.sql
+
+# Restore the PostgreSQL database from a backup file
+restore-db:
+	@cat backup.sql | docker compose exec -T pgduckdb psql -U postgres -d postgres
+
 
 # Run all tests inside the container
 test:
