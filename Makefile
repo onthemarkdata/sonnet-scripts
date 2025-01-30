@@ -20,9 +20,9 @@ exec-pythonbase:
 exec-postgres:
 	@docker compose exec pgduckdb psql -U postgres -d postgres
 
-# Execute a DuckDB shell
-exec-duckdb:
-	@docker compose exec pgduckdb duckdb
+# # Execute a DuckDB shell
+# exec-duckdb:
+# 	@docker compose exec pgduckdb duckdb
 
 # Execute a shell inside the linuxbase container
 exec-linuxbase:
@@ -30,7 +30,8 @@ exec-linuxbase:
 
 # Load data into PostgreSQL
 load-db:
-	@docker compose exec pythonbase python /apps/ingest_claims/load_claims_to_db.py
+		@docker compose exec pythonbase bash -c "PYTHONPATH=/apps python -m ingest_claims.load_claims_to_db"
+
 
 # Verify data in PostgreSQL
 verify-db:
@@ -60,7 +61,7 @@ restore-db:
 
 # Run all tests inside the container
 test:
-	@docker compose exec pythonbase pytest /apps/tests
+	@docker compose exec pythonbase pytest -v /apps/tests
 
 # Run only unit tests
 test-unit:

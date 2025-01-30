@@ -96,7 +96,7 @@ make exec-duckdb
 │── 📂 linuxbase/          # Base container for Linux dependencies
 │── 🐳 docker-compose.yml  # Container orchestration
 │── 🛠 Makefile            # Automation commands
-│── 📜 README.md           # You're here!
+│── 📜 README.md           # You are here!
 ```
 
 ## **🛠 CI/CD Pipeline**
