@@ -1,0 +1,51 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: pip install -r pythonbase/requirements.txt
+
+      - name: Build Docker Images
+        run: |
+          docker build -t linuxbase linuxbase
+          docker build -t pythonbase pythonbase
+
+      - name: Start Docker Compose
+        run: docker compose up -d --build  # Ensures it uses local builds
+
+      - name: Wait for PostgreSQL to be Ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          CONTAINER_ID=$(docker ps --filter "name=pgduckdb" --format "{{.ID}}")
+
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Error: PostgreSQL container not found!"
+            docker ps
+            exit 1
+          fi
+
+          until docker exec "$CONTAINER_ID" pg_isready -U postgres; do
+            sleep 3
+          done
+
+          echo "PostgreSQL is ready!"

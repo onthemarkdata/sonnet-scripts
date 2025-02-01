@@ -1,1 +1,53 @@
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment directories
+venv/
+.env/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore compiled Python files
+*.so
+
+# Ignore data files that should not be committed
+data/
+claims.csv
+
+# Ignore pytest cache
+tests/__pycache__/
+.pytest_cache/
+
+# Ignore Docker build artifacts
+dist/
+build/
+*.tar
+*.gz
+
+# Ignore system files
 .DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore GitHub Actions temporary files
+.github/workflows/*.log
+
+# Ignore Docker Compose volumes and logs
+docker-compose.override.yml
+**/pgduckdb_data/
+**/minio_data/
+
+# Ignore all hidden files (except .gitignore and .github)
+.*
+!.gitignore
+!.github/
