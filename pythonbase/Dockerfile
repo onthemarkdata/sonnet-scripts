@@ -16,6 +16,8 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
     && chmod +x mc \
     && mv mc /usr/local/bin/
 
+# Install DuckDB
+RUN curl --fail --location --progress-bar --output duckdb_cli-linux-amd64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip
 
 # Set up a virtual env to use for whatever app is destined for this container.
 RUN uv venv --python 3.12.6 /venv

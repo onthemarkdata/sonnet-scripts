@@ -10,7 +10,7 @@ ENV LANG=en_US.UTF-8 \
 # Update and install required packages including ca-certificates
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
-    locales git curl wget vim bash \
+    locales git curl wget vim bash unzip \
     gcc build-essential openssl ca-certificates && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
