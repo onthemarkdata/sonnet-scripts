@@ -21,8 +21,8 @@ exec-postgres:
 	@docker compose exec pgduckdb psql -U postgres -d postgres
 
 # # Execute a DuckDB shell
-# exec-duckdb:
-# 	@docker compose exec pgduckdb duckdb
+exec-duckdb:
+	@docker compose exec pythonbase ./duckdb
 
 # Execute a shell inside the linuxbase container
 exec-linuxbase:
