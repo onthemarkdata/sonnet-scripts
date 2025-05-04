@@ -34,7 +34,7 @@ Before setting up the environment, ensure you have the following installed:
    - [Install Docker](https://docs.docker.com/get-docker/)
    - [Install Docker Compose](https://docs.docker.com/compose/install/)
 
-2. **Make (for automation)**
+2. **[Make](https://www.gnu.org/software/make/) (for automation)**
    - Linux/macOS: Comes pre-installed
    - Windows: Install via [Chocolatey](https://chocolatey.org/install) → `choco install make`
 
