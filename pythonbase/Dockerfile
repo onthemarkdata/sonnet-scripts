@@ -2,7 +2,10 @@ FROM linuxbase
 
 RUN mkdir /apps
 
+# Set build arguments for cross-compilation
+ARG TARGETARCH
 
+# Set environment variables
 ENV PATH=/venv/bin:$PATH
 ENV PATH=/root/.cargo/bin:$PATH
 ENV PATH="/root/.local/bin/:$PATH"
@@ -18,7 +21,16 @@ RUN curl -LsSf https://astral.sh/uv/install.sh | sh \
 
 # Install DuckDB
 # RUN curl --fail --location --progress-bar --output duckdb_cli-linux-amd64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-amd64.zip && unzip duckdb_cli-linux-amd64.zip
-RUN curl --fail --location --progress-bar --output duckdb_cli-linux-aarch64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-aarch64.zip && unzip duckdb_cli-linux-aarch64.zip
+# RUN curl --fail --location --progress-bar --output duckdb_cli-linux-aarch64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-aarch64.zip && unzip duckdb_cli-linux-aarch64.zip
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+      curl --fail --location --progress-bar --output duckdb_cli-linux-amd64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-amd64.zip \
+      && unzip duckdb_cli-linux-amd64.zip; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+      curl --fail --location --progress-bar --output duckdb_cli-linux-aarch64.zip https://github.com/duckdb/duckdb/releases/download/v1.2.0/duckdb_cli-linux-aarch64.zip \
+      && unzip duckdb_cli-linux-aarch64.zip; \
+    else \
+      echo "Unsupported architecture: $TARGETARCH" && exit 1; \
+    fi
 
 # Set up a virtual env to use for whatever app is destined for this container.
 RUN uv venv --python 3.12.6 /venv
