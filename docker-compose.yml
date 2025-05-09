@@ -6,6 +6,8 @@ services:
     image: pythonbase
     depends_on:
       - linuxbase
+    ports:
+      - "4213:4213"
 
   linuxbase:
     build: ./linuxbase
