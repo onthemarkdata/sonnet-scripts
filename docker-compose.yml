@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
 
   pythonbase:
@@ -8,6 +6,8 @@ services:
     image: pythonbase
     depends_on:
       - linuxbase
+    ports:
+      - "4213:4213"
 
   linuxbase:
     build: ./linuxbase
