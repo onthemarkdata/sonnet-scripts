@@ -1,5 +1,3 @@
-# syntax=docker/dockerfile:1.4
-
 FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS builder
 
 # Set build arguments for cross-compilation
