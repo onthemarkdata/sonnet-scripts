@@ -30,7 +30,7 @@ exec-linuxbase:
 
 # Load data into PostgreSQL
 load-db:
-		@docker compose exec pythonbase bash -c "PYTHONPATH=/apps python -m ingest_claims.load_claims_to_db"
+	@docker compose exec -e PYTHONPATH=/apps pythonbase python -m ingest_claims.load_claims_to_db
 
 
 # Verify data in PostgreSQL
@@ -61,12 +61,12 @@ restore-db:
 
 # Run all tests inside the container
 test:
-	@docker compose exec pythonbase pytest -v /apps/tests
+	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest -v /apps/tests
 
 # Run only unit tests
 test-unit:
-	@docker compose exec pythonbase pytest /apps/tests/unit
+	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/unit
 
 # Run only integration tests
 test-integration:
-	@docker compose exec pythonbase pytest /apps/tests/integration
+	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/integration

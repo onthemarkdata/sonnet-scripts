@@ -91,8 +91,9 @@ def main():
             db.rollback()
     finally:
         # Cleanup resources
-        cleanup_files(csv_file_name)
-        print("Removed the CSV file.")
+        # cleanup_files(csv_file_name)
+        # print("Removed the CSV file.")
+        print("Not removing the CSV file.")
 
         if db:
             print("Closing the database connection.")
