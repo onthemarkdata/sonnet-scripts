@@ -1,5 +1,11 @@
 services:
 
+  linuxbase:
+    build:
+      context: ./linuxbase
+    image: linuxbase
+    container_name: linuxbase
+
   pythonbase:
     build:
       context: ./pythonbase
