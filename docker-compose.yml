@@ -11,6 +11,8 @@ services:
       context: ./pythonbase
     container_name: pythonbase
     image: pythonbase
+    depends_on:
+      - linuxbase
     ports:
       - "4213:4213"
 
@@ -37,15 +39,19 @@ services:
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_PREFERENCES_JSON_FILE: "/pgadmin4/preferences.json"
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
     ports:
       - "8080:80"
     volumes:
-      - ./pgadmin4/servers.json:/pgadmin4/servers.json
-      - ./pgadmin4/pgpass:/pgadmin4/pgpass
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+      - ./pgadmin/preferences.json:/pgadmin4/preferences.json
+      - ./pgadmin/pgpass:/pgadmin4/pgpass
     entrypoint: >
       sh -c "chmod 600 /pgadmin4/pgpass && \
-      chmod 600 /pgadmin4/servers.json && \
-      /entrypoint.sh"
+             chmod 600 /pgadmin4/servers.json && \
+             chmod 644 /pgadmin4/preferences.json && \
+             /entrypoint.sh"
 
   minio:
     image: minio/minio:latest

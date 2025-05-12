@@ -1,0 +1,10 @@
+{
+    "preferences": {
+        "browser": {
+            "startup": "query_tool"
+        },
+        "sqleditor": {
+            "default_connection": "pgduckdb"
+        }
+    }
+}
