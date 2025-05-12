@@ -54,7 +54,7 @@
         "browser:node:show_node_resource_group": false,
         "browser:node:show_node_rule": false,
         "browser:node:show_node_pga_schedule": false,
-        "browser:node:show_node_schema": false,
+        "browser:node:show_node_schema": true,
         "browser:node:show_node_sequence": false,
         "browser:node:show_node_pgd_replication_servers": false,
         "browser:node:show_node_pga_jobstep": false,
@@ -72,6 +72,7 @@
         "browser:node:show_node_pga_job": false,
         "browser:display:show_empty_coll_nodes": false,
         "browser:tab_settings:new_browser_tab_open": "query_tool",
-        "misc:user_interface:theme": "system"
+        "misc:user_interface:theme": "system",
+        "misc:user_interface:layout": "classic"
     }
 }
