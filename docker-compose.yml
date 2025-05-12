@@ -14,8 +14,8 @@ services:
   linuxbase:
     build:
       context: ./linuxbase
-    image: linuxbase
     container_name: linuxbase
+    image: linuxbase
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
