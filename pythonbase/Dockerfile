@@ -1,4 +1,4 @@
-FROM linuxbase
+FROM linuxbase AS pythonbase
 
 RUN mkdir /apps
 
@@ -6,9 +6,9 @@ RUN mkdir /apps
 ARG TARGETARCH
 
 # Set environment variables
-ENV PATH=/venv/bin:$PATH
-ENV PATH=/root/.cargo/bin:$PATH
-ENV PATH="/root/.local/bin/:$PATH"
+ENV PATH=/venv/bin:$PATH \
+    PATH=/root/.cargo/bin:$PATH \
+    PATH="/root/.local/bin/:$PATH"
 
 # Install uv, curl, and the PostgreSQL client (`psql`)
 RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
@@ -30,7 +30,6 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
 
 # Install DuckDB
 ARG DUCKDB_VERSION="v1.2.2"
-
 RUN set -eux; \
     apt-get update && apt-get install -y --no-install-recommends \
         curl ca-certificates gzip && \
@@ -49,10 +48,9 @@ RUN set -eux; \
     duckdb --version   # quick sanity check
 
 # Set up a virtual env to use for whatever app is destined for this container.
-RUN uv venv --python 3.12.6 /venv
-
-RUN echo "\nsource /venv/bin/activate\n" >> /root/.zshrc
-RUN uv --version
+RUN uv venv --python 3.12.6 /venv && \
+    echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
+    uv --version
 
 # Copy ingestion to pythonbase container
 COPY ingest_claims /apps/ingest_claims
@@ -61,11 +59,9 @@ COPY ingest_claims /apps/ingest_claims
 COPY requirements.txt /apps/requirements.txt
 
 # Run install of requirements
-RUN uv pip install --upgrade -r /apps/requirements.txt \
-    && uv pip install --upgrade granian[pname]
-
-
-RUN uv pip install --upgrade granian[pname]
+RUN . /venv/bin/activate && \
+    uv pip install --upgrade -r /apps/requirements.txt && \
+    uv pip install --upgrade granian[pname]
 
 COPY tests /apps/tests
 

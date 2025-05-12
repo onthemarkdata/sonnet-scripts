@@ -20,18 +20,29 @@ exec-pythonbase:
 exec-postgres:
 	@docker compose exec pgduckdb psql -U postgres -d postgres
 
-# # Execute a DuckDB shell
+# Execute a pgAdmin GUI in localhost based on operating system
+exec-pgadmin:
+ifeq ($(shell uname),Darwin)
+	open "http://user%40localhost.com:password@localhost:8080"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://user%40localhost.com:password@localhost:8080"
+else
+	xdg-open "http://user%40localhost.com:password@localhost:8080"
+endif
+
+# Execute a DuckDB shell
+# @docker compose exec pythonbase ./duckdb
 exec-duckdb:
-	@docker compose exec pythonbase ./duckdb
+	@docker compose exec pythonbase /usr/local/bin/duckdb
 
 # Execute a shell inside the linuxbase container
 exec-linuxbase:
 	@docker compose exec linuxbase bash
 
 # Load data into PostgreSQL
+# @docker compose exec -e PYTHONPATH=/apps pythonbase python -m ingest_claims.load_claims_to_db
 load-db:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase python -m ingest_claims.load_claims_to_db
-
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -m ingest_claims.load_claims_to_db
 
 # Verify data in PostgreSQL
 verify-db:
