@@ -8,6 +8,13 @@ rebuild:
 	@docker compose build --no-cache
 	@docker compose up -d
 
+# Completely clean up Docker environment and rebuild containers from scratch
+rebuild-clean:
+	@docker compose down -v --remove-orphans --rmi all
+	@docker compose build --no-cache linuxbase
+	@docker compose build --no-cache
+	@docker compose up -d
+
 # Stop the containers gracefully
 stop:
 	@docker compose down
@@ -23,15 +30,14 @@ exec-postgres:
 # Execute a pgAdmin GUI in localhost based on operating system
 exec-pgadmin:
 ifeq ($(shell uname),Darwin)
-	open "http://user%40localhost.com:password@localhost:8080"
+	open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 else ifeq ($(OS),Windows_NT)
-	powershell Start-Process "http://user%40localhost.com:password@localhost:8080"
+	powershell Start-Process "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 else
-	xdg-open "http://user%40localhost.com:password@localhost:8080"
+	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 endif
 
 # Execute a DuckDB shell
-# @docker compose exec pythonbase ./duckdb
 exec-duckdb:
 	@docker compose exec pythonbase /usr/local/bin/duckdb
 

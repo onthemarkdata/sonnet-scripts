@@ -35,7 +35,7 @@ services:
     image: dpage/pgadmin4:9.3.0
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: "user@localhost.com"
+      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
       PGADMIN_DEFAULT_PASSWORD: "password"
       PGADMIN_CONFIG_SERVER_MODE: 'False'
       PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
@@ -48,10 +48,15 @@ services:
       - ./pgadmin/preferences.json:/pgadmin4/preferences.json
       - ./pgadmin/pgpass:/pgadmin4/pgpass
     entrypoint: >
-      sh -c "chmod 600 /pgadmin4/pgpass && \
-             chmod 600 /pgadmin4/servers.json && \
-             chmod 644 /pgadmin4/preferences.json && \
-             /entrypoint.sh"
+      sh -c "
+        echo 'Starting: pgadmin4 setup.' && \
+        chmod 600 /pgadmin4/pgpass && \
+        chmod 600 /pgadmin4/servers.json && \
+        chmod 644 /pgadmin4/preferences.json && \
+        /venv/bin/python3 /pgadmin4/setup.py load-servers /pgadmin4/servers.json && \
+        echo 'Completed: pgadmin4 setup.' && \
+        /entrypoint.sh
+      "
 
   minio:
     image: minio/minio:latest
