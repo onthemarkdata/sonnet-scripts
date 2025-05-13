@@ -1,19 +1,21 @@
 services:
 
   pythonbase:
-    build: ./pythonbase
+    build:
+      context: ./pythonbase
     container_name: pythonbase
     image: pythonbase
     depends_on:
-      - linuxbase
+      linuxbase:
+        condition: service_completed_successfully
     ports:
       - "4213:4213"
 
   linuxbase:
-    build: ./linuxbase
+    build:
+      context: ./linuxbase
     container_name: linuxbase
     image: linuxbase
-
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
