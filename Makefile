@@ -1,5 +1,7 @@
 # Set up the project with Docker Compose
 setup:
+	@docker compose build linuxbase
+	@docker compose build pythonbase
 	@docker compose build
 	@docker compose up -d
 
@@ -11,7 +13,9 @@ rebuild:
 # Completely clean up Docker environment and rebuild containers from scratch
 rebuild-clean:
 	@docker compose down -v --remove-orphans --rmi all
-	@docker compose build --no-cache
+	@docker compose build --no-cache linuxbase
+	@docker compose build --no-cache pythonbase
+	@docker compose build
 	@docker compose up -d
 
 # Stop the containers gracefully
