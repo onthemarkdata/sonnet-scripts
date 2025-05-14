@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS builder
+FROM --platform=$BUILDPLATFORM alpine:3.18 AS builder
 
 # Set build arguments for cross-compilation
 ARG TARGETPLATFORM
@@ -10,16 +10,14 @@ RUN echo "Sonnet Scripts running on $BUILDPLATFORM, building for $TARGETPLATFORM
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US:en \
     LC_ALL=en_US.UTF-8 \
-    TZ="America/Chicago" \
-    DEBIAN_FRONTEND=noninteractive
+    TZ="America/Chicago"
 
-# Update and install required packages for common build dependencies
-RUN apt-get update && apt-get upgrade -y && \
-    apt-get install -y --no-install-recommends \
-    locales git curl wget vim bash unzip \
-    gcc build-essential openssl ca-certificates && \
-    locale-gen en_US.UTF-8 && \
-    rm -rf /var/lib/apt/lists/*
+# Install minimal build dependencies
+RUN apk add --no-cache \
+    ca-certificates openssl \
+    git curl wget bash unzip \
+    build-base libc6-compat gcc musl-dev && \
+    rm -rf /var/lib/apk/lists/*
 
 # (Placeholder) Insert cross-compilation-specific build commands here
 # RUN if [ "$TARGETARCH" = "arm64" ]; then \
