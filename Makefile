@@ -63,8 +63,6 @@ load-db:
 verify-db:
 	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
 
-<<<<<<< Updated upstream
-=======
 # Replicate data from PostrgreSQL to MinIO
 load-db-postgres-to-minio:
 	@echo "Exporting PostgreSQL → CSV..."
@@ -90,7 +88,6 @@ run-all-data-pipelines: \
 	verify-db \
 	load-db-postgres-to-minio
 
->>>>>>> Stashed changes
 # Check the running containers
 status:
 	@docker compose ps

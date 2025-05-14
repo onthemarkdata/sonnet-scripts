@@ -53,24 +53,6 @@ RUN uv venv --python 3.12.6 /venv && \
     echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
     uv --version
 
-<<<<<<< Updated upstream
-# Copy ingestion to pythonbase container
-COPY ingest_claims /apps/ingest_claims
-
-# Copy requirements to pythonbase container
-COPY requirements.txt /apps/requirements.txt
-
-# Run install of requirements
-RUN . /venv/bin/activate && \
-    uv pip install --upgrade -r /apps/requirements.txt && \
-    uv pip install --upgrade granian[pname]
-
-COPY tests /apps/tests
-
-RUN echo "We're good:" && \
-    /venv/bin/python --version
-
-=======
 # Copy application-specific files
 COPY requirements.txt /apps/requirements.txt
 COPY ingest_claims /apps/ingest_claims
@@ -85,5 +67,4 @@ RUN . /venv/bin/activate && \
 RUN echo "We're good:" && \
     /venv/bin/python --version
 
->>>>>>> Stashed changes
 CMD ["tail", "-f", "/dev/null"]
