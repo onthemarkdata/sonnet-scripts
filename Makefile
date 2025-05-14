@@ -3,6 +3,11 @@ setup:
 	@docker compose build
 	@docker compose up -d
 
+# Open the pgAdmin interface in the default browser
+pgadmin:
+	@echo "Opening pgAdmin interface at http://localhost:5050"
+	@open http://localhost:5050
+
 # Rebuild and start the containers (force rebuild)
 rebuild:
 	@docker compose build --no-cache
@@ -37,6 +42,20 @@ load-db:
 verify-db:
 	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
 
+<<<<<<< Updated upstream
+=======
+# Information about connecting to PostgreSQL via pgAdmin
+pgadmin-info:
+	@echo "To connect to PostgreSQL in pgAdmin:"
+	@echo "  1. Open http://localhost:5050 in your browser"
+	@echo "  2. Login with admin@sonnet.com / admin"
+	@echo "  3. Add a new server with these settings:"
+	@echo "     - Name: pgduckdb"
+	@echo "     - Host: pgduckdb"
+	@echo "     - Port: 5432"
+	@echo "     - Username: postgres"
+	@echo "     - Password: postgres"
+>>>>>>> Stashed changes
 
 # Check the running containers
 status:
