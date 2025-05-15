@@ -11,7 +11,8 @@ ENV PATH=/venv/bin:$PATH \
     PATH="/root/.local/bin/:$PATH"
 
 # Install uv, curl, and the PostgreSQL client (`psql`)
-RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
+RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip gzip && \
+    rm -rf /var/lib/apt/lists/*
 
 # Download UV and MinIO Client (mc) based on architecture
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
@@ -32,10 +33,6 @@ RUN if [ "$TARGETARCH" = "amd64" ]; then \
 ARG DUCKDB_VERSION="v1.2.2"
 
 RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        curl ca-certificates gzip && \
-    rm -rf /var/lib/apt/lists/* && \
-    # pick the correct pre‑built binary for the platform
     if [ "$TARGETARCH" = "amd64" ]; then \
         DUCKDB_DIST="linux-amd64"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
@@ -47,6 +44,12 @@ RUN set -eux; \
       | gunzip -c > /usr/local/bin/duckdb && \
     chmod +x /usr/local/bin/duckdb && \
     duckdb --version   # quick sanity check
+
+# Copy DuckDB init file
+COPY duckdb/init.sql /init.sql
+
+# Explicitly expose DuckDB UI port
+EXPOSE 4213
 
 # Set up a virtual env to use for whatever app is destined for this container.
 RUN uv venv --python 3.12.6 /venv && \
@@ -67,4 +70,5 @@ RUN . /venv/bin/activate && \
 RUN echo "We're good:" && \
     /venv/bin/python --version
 
+# Explicitly start DuckDB UI server on container start, persistent database, and interactive mode
 CMD ["tail", "-f", "/dev/null"]

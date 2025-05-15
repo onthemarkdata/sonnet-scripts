@@ -59,14 +59,9 @@ run-duckdb:
 exec-duckdb:
 	@docker compose exec duckdb duckdb
 
-# Execute DuckDB UI in localhost based on operating system
+# Start DuckDB UI in pythonbase container
 exec-duckdb-ui:
-	@if [ "$$(docker compose ps duckdb --format json | grep -c '"State":"running"')" = "0" ]; then \
-		echo "DuckDB container is not running. Starting container..."; \
-		make run-duckdb; \
-	else \
-		echo "DuckDB container is already running."; \
-	fi
+	@docker compose exec -d pythonbase duckdb -init /init.sql -c "SET ui_local_port=4213; CALL start_ui_server();"
 ifeq ($(shell uname),Darwin)
 	open "http://localhost:4213"
 else ifeq ($(OS),Windows_NT)

@@ -8,6 +8,8 @@ services:
     depends_on:
       linuxbase:
         condition: service_completed_successfully
+    ports:
+      - "4213:4213"
 
   linuxbase:
     build:
@@ -73,18 +75,6 @@ services:
       - 9001:9001
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
-
-  duckdb:
-    build:
-      context: ./duckdb
-    container_name: duckdb
-    ports:
-      - "4213:4213"
-    depends_on:
-      linuxbase:
-        condition: service_completed_successfully
-      minio:
-        condition: service_started
 
 volumes:
   pgduckdb_data:
