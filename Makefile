@@ -47,9 +47,33 @@ else
 	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 endif
 
-# Execute a DuckDB shell
-exec-duckdb:
+# Execute a DuckDB shell via python
+exec-duckdb-python:
 	@docker compose exec pythonbase /usr/local/bin/duckdb
+
+# Runs the DuckDB container (not python)
+run-duckdb:
+	@docker compose up -d duckdb
+
+# Execute DuckDB CLI inside the dedicated DuckDB container (interactive use)
+exec-duckdb:
+	@docker compose exec duckdb duckdb
+
+# Execute DuckDB UI in localhost based on operating system
+exec-duckdb-ui:
+	@if [ "$$(docker compose ps duckdb --format json | grep -c '"State":"running"')" = "0" ]; then \
+		echo "DuckDB container is not running. Starting container..."; \
+		make run-duckdb; \
+	else \
+		echo "DuckDB container is already running."; \
+	fi
+ifeq ($(shell uname),Darwin)
+	open "http://localhost:4213"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://localhost:4213"
+else
+	xdg-open "http://localhost:4213"
+endif
 
 # Execute a shell inside the linuxbase container
 exec-linuxbase:

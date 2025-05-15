@@ -34,9 +34,9 @@ FROM --platform=$TARGETPLATFORM ubuntu:24.04
 # Copy artifacts from builder stage if applicable
 COPY --from=builder /bin/bash /usr/local/bin/
 
-# Install runtime dependencies if necessary
+# Install runtime dependencies explicitly
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    locales ca-certificates && \
+    locales ca-certificates curl unzip gzip && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
