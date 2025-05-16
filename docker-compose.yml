@@ -23,7 +23,6 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_HOST: pgduckdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
@@ -32,6 +31,38 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:9.3.0
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_PREFERENCES_JSON_FILE: "/pgadmin4/preferences.json"
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
+    ports:
+      - "8080:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+      - ./pgadmin/preferences.json:/pgadmin4/preferences.json
+      - ./pgadmin/pgpass:/pgadmin4/pgpass
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/misc/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: >
+      sh -c "
+        echo 'Starting: pgadmin4 setup.' && \
+        chmod 600 /pgadmin4/pgpass && \
+        chmod 600 /pgadmin4/servers.json && \
+        chmod 644 /pgadmin4/preferences.json && \
+        /venv/bin/python3 /pgadmin4/setup.py load-servers /pgadmin4/servers.json && \
+        echo 'Completed: pgadmin4 setup.' && \
+        /entrypoint.sh
+      "
 
   minio:
     image: minio/minio:latest
