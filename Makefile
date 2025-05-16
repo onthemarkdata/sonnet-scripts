@@ -46,31 +46,6 @@ load-db:
 verify-db:
 	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
 
-# Replicate data from PostrgreSQL to MinIO
-load-db-postgres-to-minio:
-	@echo "Exporting PostgreSQL → CSV..."
-	docker compose exec pgduckdb psql -U postgres -d postgres \
-	  -c "\COPY raw_claims TO '/tmp/raw_claims.csv' CSV HEADER"
-
-	@echo "Transferring CSV to Pythonbase container..."
-	docker compose cp pgduckdb:/tmp/raw_claims.csv ./raw_claims.csv
-	docker compose cp ./raw_claims.csv pythonbase:/apps/raw_claims.csv
-
-	@echo "Running DuckDB pipeline CSV → MinIO..."
-	docker compose exec pythonbase /venv/bin/python /apps/etl_pipelines/duckdb_to_minio.py
-
-	@echo "Cleaning up temporary CSV files..."
-	rm ./raw_claims.csv
-	docker compose exec pythonbase rm /apps/raw_claims.csv
-
-	@echo "PostgreSQL → CSV → DuckDB → MinIO pipeline completed."
-
-# Build entire data platform, load data, and run all pipelines
-run-all-data-pipelines: \
-	load-db \
-	verify-db \
-	load-db-postgres-to-minio
-
 # Check the running containers
 status:
 	@docker compose ps
@@ -93,12 +68,29 @@ restore-db:
 
 # Run all tests inside the container
 test:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest -v /apps/tests
+	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest -v /apps/tests
 
 # Run only unit tests
 test-unit:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest /apps/tests/unit
+	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/unit
 
 # Run only integration tests
 test-integration:
 	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/integration
+
+# Execute a pgAdmin GUI in localhost based on operating system
+exec-pgadmin:
+	@if [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d '[:space:]')" = "0" ] || \
+	    [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT SUM(reltuples)::int FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind='r';" | tr -d '[:space:]')" = "0" ]; then \
+		echo "No data tables or tables are empty. Loading data..."; \
+		make load-db; \
+	else \
+		echo "Data already exists in PostgreSQL."; \
+	fi
+ifeq ($(shell uname),Darwin)
+	open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else
+	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+endif
