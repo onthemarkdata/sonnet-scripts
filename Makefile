@@ -68,15 +68,15 @@ restore-db:
 
 # Run all tests inside the container
 test:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest -v /apps/tests
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest -v /apps/tests
 
 # Run only unit tests
 test-unit:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/unit
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest /apps/tests/unit
 
 # Run only integration tests
 test-integration:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/integration
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest /apps/tests/integration
 
 # Execute a pgAdmin GUI in localhost based on operating system
 exec-pgadmin:
