@@ -125,9 +125,24 @@ check-minio:
 		mc ls local/$$bucket; \
 	done'
 
+# Import data from MinIO into DuckDB
+load-db-minio-to-duckdb:
+	@echo "Running MinIO → DuckDB pipeline..."
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -c \
+		"from etl_pipelines.minio_to_duckdb import setup_minio_to_duckdb; \
+		 setup_minio_to_duckdb('s3://postgres-data/raw_claims.parquet')"
+	@echo "MinIO → DuckDB pipeline completed successfully."
+
+# Verify data imported into DuckDB
+check-duckdb:
+	@docker compose exec pythonbase /usr/local/bin/duckdb -c \
+		"SELECT COUNT(*) AS row_count FROM raw_claims;"
+
 # Build entire data platform, load data, and run all pipelines
 run-all-data-pipelines: \
 	load-db \
 	verify-db \
 	load-db-postgres-to-minio \
-	check-minio
+	check-minio \
+	load-db-minio-to-duckdb \
+	check-duckdb

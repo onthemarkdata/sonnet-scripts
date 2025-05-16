@@ -1,11 +1,10 @@
 import duckdb
 from minio import Minio
 
-def setup_duckdb_to_minio():
-    """Set up DuckDB with MinIO (S3-compatible) connection."""
+def setup_duckdb_s3_connection():
+    """Configure DuckDB connection to MinIO."""
     duckdb.sql("INSTALL httpfs;")
     duckdb.sql("LOAD httpfs;")
-
     duckdb.sql("""
         SET s3_endpoint='minio:9000';
         SET s3_access_key_id='admin';
@@ -13,6 +12,20 @@ def setup_duckdb_to_minio():
         SET s3_use_ssl=false;
         SET s3_url_style='path';
     """)
+
+def setup_duckdb_to_minio():
+    """Prepare DuckDB for exporting data to MinIO."""
+    setup_duckdb_s3_connection()
+    print("DuckDB configured to export data to MinIO.")
+
+def setup_minio_to_duckdb(data_object_url: str):
+    """Import Parquet file from MinIO into DuckDB."""
+    setup_duckdb_s3_connection()
+    duckdb.sql(f"""
+        CREATE TABLE IF NOT EXISTS raw_claims AS
+        SELECT * FROM read_parquet('{data_object_url}');
+    """)
+    print("Data imported from MinIO to DuckDB successfully.")
 
 def create_bucket_if_not_exists(bucket_name):
     """Create MinIO bucket if it doesn't already exist."""
