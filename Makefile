@@ -78,20 +78,19 @@ test-unit:
 test-integration:
 	@docker compose exec -e PYTHONPATH=/apps pythonbase pytest /apps/tests/integration
 
-### TODO: Uncomment the following section to use pgAdmin GUI in later version ###
 # Execute a pgAdmin GUI in localhost based on operating system
-# exec-pgadmin:
-# 	@if [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d '[:space:]')" = "0" ] || \
-# 	    [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT SUM(reltuples)::int FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind='r';" | tr -d '[:space:]')" = "0" ]; then \
-# 		echo "No data tables or tables are empty. Loading data..."; \
-# 		make load-db; \
-# 	else \
-# 		echo "Data already exists in PostgreSQL."; \
-# 	fi
-# ifeq ($(shell uname),Darwin)
-# 	open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
-# else ifeq ($(OS),Windows_NT)
-# 	powershell Start-Process "http://pgadmin4%40pgadmin.org:password@localhost:8080"
-# else
-# 	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
-# endif
+exec-pgadmin:
+	@if [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d '[:space:]')" = "0" ] || \
+	    [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT SUM(reltuples)::int FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind='r';" | tr -d '[:space:]')" = "0" ]; then \
+		echo "No data tables or tables are empty. Loading data..."; \
+		make load-db; \
+	else \
+		echo "Data already exists in PostgreSQL."; \
+	fi
+ifeq ($(shell uname),Darwin)
+	open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else
+	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+endif
