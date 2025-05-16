@@ -13,7 +13,7 @@ ENV PATH=/venv/bin:$PATH \
 # Install uv, curl, and the PostgreSQL client (`psql`)
 RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
 
-# Download UV
+# Download UV and MinIO Client (mc) based on architecture
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
         curl -LsSf https://astral.sh/uv/install.sh | sh \
         && curl -O https://dl.min.io/client/mc/release/linux-amd64/mc \
@@ -53,18 +53,16 @@ RUN uv venv --python 3.12.6 /venv && \
     echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
     uv --version
 
-# Copy ingestion to pythonbase container
-COPY ingest_claims /apps/ingest_claims
-
-# Copy requirements to pythonbase container
+# Copy application-specific files
 COPY requirements.txt /apps/requirements.txt
+COPY ingest_claims /apps/ingest_claims
+COPY etl_pipelines /apps/etl_pipelines
+COPY tests /apps/tests
 
 # Run install of requirements
 RUN . /venv/bin/activate && \
     uv pip install --upgrade -r /apps/requirements.txt && \
     uv pip install --upgrade granian[pname]
-
-COPY tests /apps/tests
 
 RUN echo "We're good:" && \
     /venv/bin/python --version

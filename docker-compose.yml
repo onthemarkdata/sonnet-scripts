@@ -65,7 +65,7 @@ services:
       "
 
   minio:
-    image: minio/minio:latest
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     container_name: minio
     environment:
       - MINIO_ROOT_USER=admin
@@ -75,6 +75,14 @@ services:
       - 9001:9001
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
+
+  minio_autologin:
+    image: nginx:stable-alpine
+    container_name: minio_autologin
+    ports:
+      - "58080:80"
+    volumes:
+      - ./minio-autologin.html:/usr/share/nginx/html/index.html:ro
 
 volumes:
   pgduckdb_data:
