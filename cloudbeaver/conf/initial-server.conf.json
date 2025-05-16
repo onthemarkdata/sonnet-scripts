@@ -1,0 +1,11 @@
+{
+    "serverName": "CloudBeaver",
+    "serverURL": "http://localhost:8978",
+    "adminName": "CloudBeaverAdmin1!",
+    "adminPassword": "CloudBeaverAdmin1!",
+    "anonymousAccessEnabled": true,
+    "configurationMode": "prod",
+    "resourceManagerEnabled": true,
+    "configurationWizardEnabled": false,
+    "defaultTheme": "system"
+}
