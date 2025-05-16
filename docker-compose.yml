@@ -90,7 +90,7 @@ services:
     volumes:
       - cloudbeaver-data:/opt/cloudbeaver/workspace
       - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
-      - ./cloudbeaver/conf/initial-data.conf:/opt/cloudbeaver/conf/initial-data.conf
+      - ./cloudbeaver/conf/initial-data-sources.conf.json:/opt/cloudbeaver/conf/initial-data-sources.conf.json
     depends_on:
       - pythonbase
 
