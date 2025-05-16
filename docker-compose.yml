@@ -76,6 +76,14 @@ services:
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
 
+  minio_autologin:
+    image: nginx:stable-alpine
+    container_name: minio_autologin
+    ports:
+      - "58080:80"
+    volumes:
+      - ./minio-autologin.html:/usr/share/nginx/html/index.html:ro
+
 volumes:
   pgduckdb_data:
    driver: local

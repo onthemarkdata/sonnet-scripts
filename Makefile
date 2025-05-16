@@ -114,8 +114,20 @@ load-db-postgres-to-minio:
 
 	@echo "PostgreSQL → CSV → DuckDB → MinIO pipeline completed."
 
+# Check status of minio database
+check-minio:
+	docker compose exec minio mc alias set local http://localhost:9000 admin password
+	docker compose exec minio mc admin info local
+	docker compose exec minio mc ls local
+	docker compose exec minio sh -c '\
+	for bucket in $$(mc ls local | tr -s " " | cut -d" " -f5); do \
+		echo "\nBucket: $$bucket"; \
+		mc ls local/$$bucket; \
+	done'
+
 # Build entire data platform, load data, and run all pipelines
 run-all-data-pipelines: \
 	load-db \
 	verify-db \
-	load-db-postgres-to-minio
+	load-db-postgres-to-minio \
+	check-minio
