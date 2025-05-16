@@ -95,6 +95,7 @@ else
 	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 endif
 
+
 # Replicate data from PostrgreSQL to MinIO
 load-db-postgres-to-minio:
 	@echo "Exporting PostgreSQL → CSV..."
