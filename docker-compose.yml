@@ -81,18 +81,12 @@ services:
     container_name: cloudbeaver
     ports:
       - "8978:8978"
-    environment:
-      CB_SERVER_NAME: "CloudBeaver"
-      CB_SERVER_ANONYMOUS_ACCESS_ENABLED: "true"
-      CB_ADMIN_NAME: "CloudBeaverAdmin1!"
-      CB_ADMIN_PASSWORD: "CloudBeaverAdmin1!"
-      CB_SERVER_CONFIGURATION_WIZARD_ENABLED: "false"
     volumes:
       - cloudbeaver-data:/opt/cloudbeaver/workspace
       - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
-      - ./cloudbeaver/conf/initial-data-sources.conf.json:/opt/cloudbeaver/conf/initial-data-sources.conf.json
+      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
     depends_on:
-      - pythonbase
+      - pgduckdb
 
 volumes:
   pgduckdb_data:
