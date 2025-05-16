@@ -94,3 +94,28 @@ else ifeq ($(OS),Windows_NT)
 else
 	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 endif
+
+# Replicate data from PostrgreSQL to MinIO
+load-db-postgres-to-minio:
+	@echo "Exporting PostgreSQL → CSV..."
+	docker compose exec pgduckdb psql -U postgres -d postgres \
+	  -c "\COPY raw_claims TO '/tmp/raw_claims.csv' CSV HEADER"
+
+	@echo "Transferring CSV to Pythonbase container..."
+	docker compose cp pgduckdb:/tmp/raw_claims.csv ./raw_claims.csv
+	docker compose cp ./raw_claims.csv pythonbase:/apps/raw_claims.csv
+
+	@echo "Running DuckDB pipeline CSV → MinIO..."
+	docker compose exec pythonbase /venv/bin/python /apps/etl_pipelines/duckdb_to_minio.py
+
+	@echo "Cleaning up temporary CSV files..."
+	rm ./raw_claims.csv
+	docker compose exec pythonbase rm /apps/raw_claims.csv
+
+	@echo "PostgreSQL → CSV → DuckDB → MinIO pipeline completed."
+
+# Build entire data platform, load data, and run all pipelines
+run-all-data-pipelines: \
+	load-db \
+	verify-db \
+	load-db-postgres-to-minio
