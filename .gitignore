@@ -17,7 +17,7 @@ venv/
 
 # Ignore data files that should not be committed
 data/
-claims.csv
+*.csv
 
 # Ignore pytest cache
 tests/__pycache__/
