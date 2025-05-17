@@ -103,10 +103,10 @@ load-db-postgres-to-minio:
 
 	@echo "Transferring CSV to Pythonbase container..."
 	docker compose cp pgduckdb:/tmp/raw_claims.csv ./raw_claims.csv
-	docker compose cp ./raw_claims.csv pythonbase:/apps/raw_claims.csv
+	docker compose cp ./raw_claims.csv pythonbase:/apps/raw_claims.csv >/dev/null 2>&1
 
 	@echo "Running DuckDB pipeline CSV → MinIO..."
-	docker compose exec pythonbase /venv/bin/python /apps/etl_pipelines/duckdb_to_minio.py
+	docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -m etl_pipelines.duckdb_to_minio
 
 	@echo "Cleaning up temporary CSV files..."
 	rm ./raw_claims.csv
@@ -125,9 +125,26 @@ check-minio:
 		mc ls local/$$bucket; \
 	done'
 
+# Import data from MinIO into DuckDB
+load-db-minio-to-duckdb:
+	@echo "Running MinIO → DuckDB pipeline..."
+	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -c \
+		"from etl_pipelines.minio_to_duckdb import import_minio_to_duckdb, setup_duckdb_minio_connection; \
+		con = setup_duckdb_minio_connection(); \
+		import_minio_to_duckdb(con, 'postgres-data', 'raw_claims.parquet', 'raw_claims'); \
+		con.close()"
+	@echo "MinIO → DuckDB pipeline completed successfully."
+
+# Verify data imported into DuckDB
+check-duckdb:
+	@docker compose exec pythonbase /usr/local/bin/duckdb /apps/my_database.duckdb \
+		-c "SELECT COUNT(*) AS row_count FROM raw_claims;"
+
 # Build entire data platform, load data, and run all pipelines
 run-all-data-pipelines: \
 	load-db \
 	verify-db \
 	load-db-postgres-to-minio \
-	check-minio
+	check-minio \
+	load-db-minio-to-duckdb \
+	check-duckdb
