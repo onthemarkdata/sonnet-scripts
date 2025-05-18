@@ -29,7 +29,6 @@ services:
         condition: service_healthy
     ports:
       - "8888:8888"
-    profiles: ["build"]
   
   pipelinebase:
     build:

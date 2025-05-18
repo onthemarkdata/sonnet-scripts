@@ -17,5 +17,5 @@
   },
   "remoteEnv": {},
   "shutdownAction": "stopCompose",
-  "initializeCommand": "docker compose --profile build build"
+  "initializeCommand": "docker compose build pythonbase"
 }
