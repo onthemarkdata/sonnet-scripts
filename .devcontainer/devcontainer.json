@@ -1,23 +1,37 @@
 {
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "jupyterbase",
-    "workspaceFolder": "/apps",
-    "forwardPorts": [8888, 8080, 9001],
-    "portsAttributes": {
-        "8888": {
-            "label": "Jupyter Lab",
-            "onAutoForward": "openBrowser",
-            "visibility": "public"
-        },
-        "8080": {
-            "label": "pgAdmin",
-            "onAutoForward": "openBrowser",
-            "visibility": "public"
-        },
-        "9001": {
-            "label": "MinIO Console",
-            "onAutoForward": "openBrowser",
-            "visibility": "public"
-        }
-    }
-}
+    "name":"Sonnet Scripts Dev Container",
+    "dockerComposeFile":[
+       "../docker-compose.yml"
+    ],
+    "service":"jupyterbase",
+    "workspaceFolder":"/apps",
+    "forwardPorts":[
+       8888,
+       8080,
+       9001
+    ],
+    "portsAttributes":{
+       "8888":{
+          "label":"Jupyter Lab",
+          "onAutoForward":"openBrowser",
+          "visibility":"public"
+       },
+       "8080":{
+          "label":"pgAdmin",
+          "onAutoForward":"openBrowser",
+          "visibility":"public"
+       },
+       "9001":{
+          "label":"MinIO Console",
+          "onAutoForward":"openBrowser",
+          "visibility":"public"
+       }
+    },
+    "remoteUser":"root",
+    "extensions":[
+       "ms-python.python",
+       "ms-azuretools.vscode-docker",
+       "ms-python.vscode-pylance"
+    ],
+    "shutdownAction":"stopCompose"
+ }
