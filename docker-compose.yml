@@ -4,7 +4,7 @@ services:
     build:
       context: ./pythonbase
     container_name: pythonbase
-    image: pythonbase
+    image: pythonbase:latest
     depends_on:
       linuxbase:
         condition: service_completed_successfully
@@ -15,7 +15,7 @@ services:
     build:
       context: ./jupyterbase
     container_name: jupyterbase
-    image: jupyterbase
+    image: jupyterbase:latest
     depends_on:
       pythonbase:
         condition: service_started
@@ -28,7 +28,7 @@ services:
     build:
       context: ./pipelinebase
     container_name: pipelinebase
-    image: pipelinebase
+    image: pipelinebase:latest
     depends_on:
       pythonbase:
         condition: service_started
@@ -41,7 +41,7 @@ services:
     build:
       context: ./linuxbase
     container_name: linuxbase
-    image: linuxbase
+    image: linuxbase:latest
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
