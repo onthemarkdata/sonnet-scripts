@@ -1,8 +1,6 @@
 {
     "name": "Sonnet Scripts - Codespaces Dev Container",
-    "dockerComposeFile": [
-      "../docker-compose.yml"
-    ],
+    "dockerComposeFile": ["docker-compose.yml"],
     "service": "jupyterbase",
     "workspaceFolder": "/apps",
     "settings": {
