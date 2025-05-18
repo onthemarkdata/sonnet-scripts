@@ -2,6 +2,7 @@
 setup:
 	@docker compose build linuxbase
 	@docker compose build pythonbase
+	@docker compose build pipelinebase
 	@docker compose build
 	@docker compose up -d
 
@@ -15,6 +16,7 @@ rebuild-clean:
 	@docker compose down -v --remove-orphans --rmi all
 	@docker compose build --no-cache linuxbase
 	@docker compose build --no-cache pythonbase
+	@docker compose build --no-cache pipelinebase
 	@docker compose build
 	@docker compose up -d
 
@@ -25,6 +27,10 @@ stop:
 # Execute a shell inside the pythonbase container
 exec-pythonbase:
 	@docker compose exec pythonbase bash
+
+# Execute a shell inside the pipelinebase container
+exec-pipelinebase:
+	@docker compose exec pipelinebase bash
 
 # Execute a PostgreSQL shell
 exec-postgres:
@@ -40,7 +46,7 @@ exec-linuxbase:
 
 # Load data into PostgreSQL
 load-db:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -m ingest_claims.load_claims_to_db
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -m ingest_claims.load_claims_to_db
 
 # Verify data in PostgreSQL
 verify-db:
@@ -68,15 +74,15 @@ restore-db:
 
 # Run all tests inside the container
 test:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest -v /apps/tests
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest -v /apps/tests
 
 # Run only unit tests
 test-unit:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest /apps/tests/unit
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest /apps/tests/unit
 
 # Run only integration tests
 test-integration:
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/pytest /apps/tests/integration
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest /apps/tests/integration
 
 # Execute a pgAdmin GUI in localhost based on operating system
 exec-pgadmin:
@@ -97,20 +103,20 @@ endif
 
 # Replicate data from PostrgreSQL to MinIO
 load-db-postgres-to-minio:
-	@echo "Exporting PostgreSQL → CSV..."
+	@echo "Exporting PostgreSQL → CSV (limited sample)..."
 	docker compose exec pgduckdb psql -U postgres -d postgres \
-	  -c "\COPY raw_claims TO '/tmp/raw_claims.csv' CSV HEADER"
+	  -c "\COPY (SELECT * FROM raw_claims LIMIT 100000) TO '/tmp/raw_claims.csv' CSV HEADER"
 
-	@echo "Transferring CSV to Pythonbase container..."
+	@echo "Transferring CSV to Pipelinebase container..."
 	docker compose cp pgduckdb:/tmp/raw_claims.csv ./raw_claims.csv
-	docker compose cp ./raw_claims.csv pythonbase:/apps/raw_claims.csv >/dev/null 2>&1
+	docker compose cp ./raw_claims.csv pipelinebase:/apps/raw_claims.csv >/dev/null 2>&1
 
 	@echo "Running DuckDB pipeline CSV → MinIO..."
-	docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -m etl_pipelines.duckdb_to_minio
+	docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -m etl_pipelines.duckdb_to_minio
 
 	@echo "Cleaning up temporary CSV files..."
 	rm ./raw_claims.csv
-	docker compose exec pythonbase rm /apps/raw_claims.csv
+	docker compose exec pipelinebase rm /apps/raw_claims.csv
 
 	@echo "PostgreSQL → CSV → DuckDB → MinIO pipeline completed."
 
@@ -128,7 +134,7 @@ check-minio:
 # Import data from MinIO into DuckDB
 load-db-minio-to-duckdb:
 	@echo "Running MinIO → DuckDB pipeline..."
-	@docker compose exec -e PYTHONPATH=/apps pythonbase /venv/bin/python -c \
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -c \
 		"from etl_pipelines.minio_to_duckdb import import_minio_to_duckdb, setup_duckdb_minio_connection; \
 		con = setup_duckdb_minio_connection(); \
 		import_minio_to_duckdb(con, 'postgres-data', 'raw_claims.parquet', 'raw_claims'); \
@@ -137,7 +143,7 @@ load-db-minio-to-duckdb:
 
 # Verify data imported into DuckDB
 check-duckdb:
-	@docker compose exec pythonbase /usr/local/bin/duckdb /apps/my_database.duckdb \
+	@docker compose exec pipelinebase /usr/local/bin/duckdb /apps/my_database.duckdb \
 		-c "SELECT COUNT(*) AS row_count FROM raw_claims;"
 
 # Build entire data platform, load data, and run all pipelines
