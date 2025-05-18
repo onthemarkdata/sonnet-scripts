@@ -23,6 +23,10 @@ services:
         condition: service_healthy
     ports:
       - "8888:8888"
+    labels:
+      - "devcontainer.ports.8888.label=Jupyter Lab"
+      - "devcontainer.ports.8888.onAutoForward=openBrowser"
+      - "devcontainer.ports.8888.visibility=public"
   
   pipelinebase:
     build:
@@ -70,6 +74,10 @@ services:
       PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
     ports:
       - "8080:80"
+    labels:
+      - "devcontainer.ports.8080.label=pgAdmin"
+      - "devcontainer.ports.8080.onAutoForward=openBrowser"
+      - "devcontainer.ports.8080.visibility=public"
     volumes:
       - ./pgadmin/servers.json:/pgadmin4/servers.json
       - ./pgadmin/preferences.json:/pgadmin4/preferences.json
@@ -100,6 +108,10 @@ services:
     ports:
       - 9001:9001
       - 9000:9000
+    labels:
+      - "devcontainer.ports.9001.label=MinIO Console"
+      - "devcontainer.ports.9001.onAutoForward=openBrowser"
+      - "devcontainer.ports.9001.visibility=public"
     command: ["server", "/data", "--console-address", ":9001"]
 
   cloudbeaver:
