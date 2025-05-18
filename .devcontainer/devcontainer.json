@@ -1,0 +1,18 @@
+{
+    "name": "Sonnet Scripts - Codespaces Dev Container",
+    "dockerComposeFile": [
+        "../docker-compose.yml"
+    ],
+    "service": "apps/", // Replace "app" with the name of your main service in the compose file
+    "workspaceFolder": "/workspaces/sonnet-scripts",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "ms-python.python",
+        "ms-azuretools.vscode-docker"
+    ],
+    "forwardPorts": [],
+    "postCreateCommand": "",
+    "remoteUser": "vscode"
+}
