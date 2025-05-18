@@ -201,7 +201,7 @@ Maintained by:
 
 - [Mark Freeman]
    **GitHub**: [onthemarkdata](https://github.com/onthemarkdata)
-   **LinkedIn**:
+   **LinkedIn**:[Mark Freeman II](https://www.linkedin.com/in/mafreeman2/)
 
 If you have questions or encounter issues, feel free to:
 - Open a GitHub issue
