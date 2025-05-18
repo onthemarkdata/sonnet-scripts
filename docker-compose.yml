@@ -1,5 +1,11 @@
 services:
 
+  linuxbase:
+    build:
+      context: ./linuxbase
+    container_name: linuxbase
+    image: linuxbase:latest
+
   pythonbase:
     build:
       context: ./pythonbase
@@ -23,10 +29,7 @@ services:
         condition: service_healthy
     ports:
       - "8888:8888"
-    labels:
-      - "devcontainer.ports.8888.label=Jupyter Lab"
-      - "devcontainer.ports.8888.onAutoForward=openBrowser"
-      - "devcontainer.ports.8888.visibility=public"
+    profiles: ["build"]
   
   pipelinebase:
     build:
@@ -40,12 +43,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-
-  linuxbase:
-    build:
-      context: ./linuxbase
-    container_name: linuxbase
-    image: linuxbase:latest
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
@@ -74,10 +71,6 @@ services:
       PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
     ports:
       - "8080:80"
-    labels:
-      - "devcontainer.ports.8080.label=pgAdmin"
-      - "devcontainer.ports.8080.onAutoForward=openBrowser"
-      - "devcontainer.ports.8080.visibility=public"
     volumes:
       - ./pgadmin/servers.json:/pgadmin4/servers.json
       - ./pgadmin/preferences.json:/pgadmin4/preferences.json
@@ -108,28 +101,24 @@ services:
     ports:
       - 9001:9001
       - 9000:9000
-    labels:
-      - "devcontainer.ports.9001.label=MinIO Console"
-      - "devcontainer.ports.9001.onAutoForward=openBrowser"
-      - "devcontainer.ports.9001.visibility=public"
     command: ["server", "/data", "--console-address", ":9001"]
 
-  cloudbeaver:
-    image: dbeaver/cloudbeaver:25.0.3
-    container_name: cloudbeaver
-    ports:
-      - "8978:8978"
-    volumes:
-      - cloudbeaver-data:/opt/cloudbeaver/workspace
-      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
-      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
-    depends_on:
-      - pgduckdb
+  # cloudbeaver:
+  #   image: dbeaver/cloudbeaver:25.0.3
+  #   container_name: cloudbeaver
+  #   ports:
+  #     - "8978:8978"
+  #   volumes:
+  #     - cloudbeaver-data:/opt/cloudbeaver/workspace
+  #     - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
+  #     - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
+  #   depends_on:
+  #     - pgduckdb
 
 volumes:
   pgduckdb_data:
    driver: local
   data:
    driver: local
-  cloudbeaver-data:
-    driver: local
+  # cloudbeaver-data:
+  #   driver: local
