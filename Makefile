@@ -119,6 +119,16 @@ else
 	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
 endif
 
+# Open Jupyter Lab GUI in localhost based on operating system
+exec-jupyter:
+ifeq ($(shell uname),Darwin)
+	open "http://localhost:8888"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://localhost:8888"
+else
+	xdg-open "http://localhost:8888"
+endif
+
 # Replicate data from PostrgreSQL to MinIO
 load-db-postgres-to-minio:
 	@echo "Exporting PostgreSQL → CSV (limited sample)..."
