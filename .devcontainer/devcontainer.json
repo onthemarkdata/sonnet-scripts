@@ -3,16 +3,44 @@
     "dockerComposeFile": [
         "../docker-compose.yml"
     ],
-    "service": "apps/", // Replace "app" with the name of your main service in the compose file
-    "workspaceFolder": "/workspaces/sonnet-scripts",
+    "service": "jupyterbase",
+    "workspaceFolder": "/apps",
     "settings": {
-        "terminal.integrated.shell.linux": "/bin/bash"
+        "terminal.integrated.shell.linux": "/bin/bash",
+        "python.defaultInterpreterPath": "/venv/bin/python"
     },
     "extensions": [
         "ms-python.python",
-        "ms-azuretools.vscode-docker"
+        "ms-azuretools.vscode-docker",
+        "ms-python.vscode-pylance"
     ],
-    "forwardPorts": [],
-    "postCreateCommand": "",
-    "remoteUser": "vscode"
+    "forwardPorts": [8888, 8080, 9001, 8978, 5432],
+    "portsAttributes": {
+        "8888": {
+            "label": "Jupyter Lab",
+            "onAutoForward": "openBrowser",
+            "visibility": "public"
+        },
+        "8080": {
+            "label": "pgAdmin",
+            "onAutoForward": "openBrowser",
+            "visibility": "public"
+        },
+        "9001": {
+            "label": "MinIO Console",
+            "onAutoForward": "openBrowser",
+            "visibility": "public"
+        },
+        "8978": {
+            "label": "CloudBeaver",
+            "onAutoForward": "openBrowser",
+            "visibility": "public"
+        },
+        "5432": {
+            "label": "Postgres/DuckDB",
+            "visibility": "private"
+        }
+    },
+    "remoteUser": "root",
+    "shutdownAction": "stopCompose"
 }
