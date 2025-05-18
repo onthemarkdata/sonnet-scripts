@@ -11,7 +11,7 @@ RUN uv venv --python 3.12.6 /venv && \
 # Copy and install Python dependencies
 COPY requirements.txt /apps/requirements.txt
 RUN . /venv/bin/activate && \
-    uv pip install --upgrade -r /apps/requirements.txt
+    uv pip install -r /apps/requirements.txt
 
 # Ensure module structure (optional but recommended)
 RUN touch /apps/__init__.py
