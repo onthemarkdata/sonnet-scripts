@@ -11,6 +11,19 @@ services:
     ports:
       - "4213:4213"
       
+  jupyterbase:
+    build:
+      context: ./jupyterbase
+    container_name: jupyterbase
+    image: jupyterbase
+    depends_on:
+      pythonbase:
+        condition: service_started
+      pgduckdb:
+        condition: service_healthy
+    ports:
+      - "8888:8888"
+  
   pipelinebase:
     build:
       context: ./pipelinebase
