@@ -30,9 +30,27 @@ exec-pythonbase:
 exec-postgres:
 	@docker compose exec pgduckdb psql -U postgres -d postgres
 
-# Execute a DuckDB shell
+# Execute DuckDB shell with persistent DB file
 exec-duckdb:
+	@docker compose exec pythonbase /usr/local/bin/duckdb /apps/sonnet.duckdb
+
+# Execute a DuckDB shell
+exec-duckdb-shell:
 	@docker compose exec pythonbase /usr/local/bin/duckdb
+
+# Start CloudBeaver and open the UI
+exec-cloudbeaver:
+	@echo "Starting CloudBeaver..."
+	docker compose up -d cloudbeaver
+	@echo "CloudBeaver is running at: http://localhost:8978 (admin/admin)"
+
+ifeq ($(shell uname),Darwin)
+	open "http://localhost:8978"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://localhost:8978"
+else
+	xdg-open "http://localhost:8978"
+endif
 
 # Execute a shell inside the linuxbase container
 exec-linuxbase:

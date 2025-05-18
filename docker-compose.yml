@@ -76,8 +76,22 @@ services:
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
 
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:25.0.3
+    container_name: cloudbeaver
+    ports:
+      - "8978:8978"
+    volumes:
+      - cloudbeaver-data:/opt/cloudbeaver/workspace
+      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
+      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
+    depends_on:
+      - pgduckdb
+
 volumes:
   pgduckdb_data:
    driver: local
   data:
    driver: local
+  cloudbeaver-data:
+    driver: local
