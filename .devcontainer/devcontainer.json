@@ -18,5 +18,10 @@
   "remoteEnv": {},
   "shutdownAction": "stopCompose",
   "initializeCommand": "docker compose build linuxbase && docker compose build pythonbase",
-  "postStartCommand": "pkill -f 'tail -f /dev/null' || true"
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {
+      "version": "latest",
+      "moby": true
+    }
+  }
 }
