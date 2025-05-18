@@ -64,4 +64,4 @@ RUN . /venv/bin/activate && \
 RUN echo "We're good:" && \
     /venv/bin/python --version
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["/bin/bash", "-c", "trap 'exit 0' SIGTERM; while true; do sleep 1; done"]
