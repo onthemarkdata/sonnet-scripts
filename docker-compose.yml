@@ -100,6 +100,29 @@ services:
       - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
     depends_on:
       - pgduckdb
+  
+  dbgate:
+    image: dbgate/dbgate
+    container_name: dbgate
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - dbgate_data:/root/.dbgate
+    environment:
+      # CONNECTIONS: "pgduckdb,duckdb"
+      CONNECTIONS: "pgduckdb"
+
+      LABEL_pgduckdb: "Postgres (pgduckdb)"
+      SERVER_pgduckdb: "pgduckdb"
+      PORT_pgduckdb: "5432"
+      USER_pgduckdb: "postgres"
+      PASSWORD_pgduckdb: "postgres"
+      ENGINE_pgduckdb: "postgres@dbgate-plugin-postgres"
+
+      # LABEL_duckdb_file: "DuckDB"
+      # FILE_duckdb_file: "/var/lib/duckdb/data/my_database.duckdb"
+      # ENGINE_duckdb_file: "duckdb@dbgate-plugin-duckdb"
 
 volumes:
   pgduckdb_data:
@@ -107,4 +130,6 @@ volumes:
   data:
    driver: local
   cloudbeaver-data:
+    driver: local
+  dbgate_data:
     driver: local
