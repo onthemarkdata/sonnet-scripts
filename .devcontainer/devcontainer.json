@@ -17,5 +17,6 @@
   },
   "remoteEnv": {},
   "shutdownAction": "stopCompose",
-  "initializeCommand": "docker compose build linuxbase && docker compose build pythonbase"
+  "initializeCommand": "docker compose build linuxbase && docker compose build pythonbase",
+  "postStartCommand": "pkill -f 'tail -f /dev/null' || true"
 }
