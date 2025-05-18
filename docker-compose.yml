@@ -32,38 +32,6 @@ services:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       retries: 5
 
-  pgadmin:
-    image: dpage/pgadmin4:9.3.0
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
-      PGADMIN_DEFAULT_PASSWORD: "password"
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
-      PGADMIN_PREFERENCES_JSON_FILE: "/pgadmin4/preferences.json"
-      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
-    ports:
-      - "8080:80"
-    volumes:
-      - ./pgadmin/servers.json:/pgadmin4/servers.json
-      - ./pgadmin/preferences.json:/pgadmin4/preferences.json
-      - ./pgadmin/pgpass:/pgadmin4/pgpass
-    healthcheck:
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/misc/ping"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    entrypoint: >
-      sh -c "
-        echo 'Starting: pgadmin4 setup.' && \
-        chmod 600 /pgadmin4/pgpass && \
-        chmod 600 /pgadmin4/servers.json && \
-        chmod 644 /pgadmin4/preferences.json && \
-        /venv/bin/python3 /pgadmin4/setup.py load-servers /pgadmin4/servers.json && \
-        echo 'Completed: pgadmin4 setup.' && \
-        /entrypoint.sh
-      "
-
   minio:
     image: minio/minio:RELEASE.2025-04-22T22-12-26Z
     container_name: minio
@@ -74,10 +42,48 @@ services:
     ports:
       - 9001:9001
       - 9000:9000
+    volumes:
+      - minio_data:/data
     command: ["server", "/data", "--console-address", ":9001"]
+
+
+  duckdb:
+    build:
+      context: ./duckdb
+    container_name: duckdb
+    ports:
+      - "4321:4321"
+    volumes:
+      - duckdb_data:/root/duckdb
+
+  dbgate:
+      image: dbgate/dbgate
+      container_name: dbgate
+      restart: always
+      ports:
+        - "3000:3000"
+      volumes:
+        - dbgate_data:/root/.dbgate
+      environment:
+        CONNECTIONS: "pgduckdb,duckdb"
+
+        LABEL_pgduckdb: "Postgres (pgduckdb)"
+        SERVER_pgduckdb: "pgduckdb"
+        PORT_pgduckdb: "5432"
+        USER_pgduckdb: "postgres"
+        PASSWORD_pgduckdb: "postgres"
+        ENGINE_pgduckdb: "postgres@dbgate-plugin-postgres"
+
+        # LABEL_duckdb_file: "DuckDB"
+        # FILE_duckdb_file: "/var/lib/duckdb/data/my_database.duckdb"
+        # ENGINE_duckdb_file: "duckdb@dbgate-plugin-duckdb"
 
 volumes:
   pgduckdb_data:
-   driver: local
-  data:
-   driver: local
+    driver: local
+  minio_data:
+    driver: local
+  dbgate_data:
+    driver: local
+  duckdb_data:
+    driver: local

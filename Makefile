@@ -137,7 +137,7 @@ load-db-minio-to-duckdb:
 
 # Verify data imported into DuckDB
 check-duckdb:
-	@docker compose exec pythonbase /usr/local/bin/duckdb /apps/my_database.duckdb \
+	@docker compose exec duckdb duckdb /data/my_database.duckdb \
 		-c "SELECT COUNT(*) AS row_count FROM raw_claims;"
 
 # Build entire data platform, load data, and run all pipelines

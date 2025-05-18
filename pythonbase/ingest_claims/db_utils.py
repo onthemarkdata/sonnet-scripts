@@ -11,7 +11,7 @@ def connect_to_db():
             dbname=os.getenv("DB_NAME", "postgres"),
             user=os.getenv("DB_USER", "postgres"),
             password=os.getenv("DB_PASSWORD", "postgres"),
-            host=os.getenv("DB_HOST", "pgduckdb"),  # Use "db" as the hostname
+            host=os.getenv("DB_HOST", "pgduckdb"),
             port=os.getenv("DB_PORT", 5432),
         )
         return connection

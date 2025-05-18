@@ -3,7 +3,7 @@ from minio import Minio
 
 def setup_duckdb_minio_connection():
     """Configure DuckDB connection to MinIO and use persistent database."""
-    con = duckdb.connect('/apps/my_database.duckdb')  # <-- Explicit persistent database file
+    con = duckdb.connect('/root/.duckdb')
     con.execute("INSTALL httpfs;")
     con.execute("LOAD httpfs;")
     con.execute("""
