@@ -165,6 +165,7 @@ For a specific container: `make logs c=container_name`
 │── 📂 pythonbase/         # Python-based processing container
 │── 📂 pipelinebase/       # ETL pipeline and data ingest container
 │── 📂 linuxbase/          # Base container for Linux dependencies
+│── 📂 jupyterbase/        # Jupyter container for analytics and data science
 │── 🐳 docker-compose.yml  # Container orchestration
 │── 🛠 Makefile            # Automation commands
 │── 📜 README.md           # You are here!
