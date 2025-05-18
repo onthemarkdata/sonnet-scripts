@@ -3,10 +3,10 @@
   "dockerComposeFile": [
     "../docker-compose.yml"
   ],
-  "service": "jupyterbase",
-  "workspaceFolder": "/workspace",
+  "service": "pythonbase",
+  "workspaceFolder": "/workspaces/sonnet-scripts",
   "build": {
-    "target": "jupyterbase"
+    "target": "pythonbase"
   },
   "extensions": [
     "ms-python.python",
