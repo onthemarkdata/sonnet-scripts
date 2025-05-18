@@ -47,7 +47,8 @@ docker-compose.override.yml
 **/pgduckdb_data/
 **/minio_data/
 
-# Ignore all hidden files (except .gitignore and .github)
+# Ignore all hidden files (except .devcontainer, .gitignore and .github)
 .*
 !.gitignore
 !.github/
+!.devcontainer/
