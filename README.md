@@ -92,10 +92,78 @@ make exec-postgres
 make exec-duckdb
 ```
 
+### **9️⃣ Access the Pipeline Container CLI**
+```sh
+make exec-pipelinebase
+```
+
+### **🔄 Data Pipeline Commands**
+
+#### **Export Data from PostgreSQL to MinIO**
+```sh
+make load-db-postgres-to-minio
+```
+This command:
+- Exports a sample of data from PostgreSQL to CSV
+- Transfers the CSV to the pipelinebase container
+- Converts the CSV to Parquet and uploads to MinIO
+- Cleans up temporary files
+
+#### **Import Data from MinIO to DuckDB**
+```sh
+make load-db-minio-to-duckdb
+```
+
+#### **Check MinIO Status and Contents**
+```sh
+make check-minio
+```
+
+#### **Verify Data in DuckDB**
+```sh
+make check-duckdb
+```
+
+#### **Run the Complete Data Pipeline**
+```sh
+make run-all-data-pipelines
+```
+This runs the entire ETL process from PostgreSQL to MinIO to DuckDB.
+
+### **🧹 Environment Management**
+
+#### **Stop All Containers**
+```sh
+make stop
+```
+
+#### **Rebuild Containers**
+```sh
+make rebuild
+```
+
+#### **Complete Rebuild (Clean)**
+```sh
+make rebuild-clean
+```
+This removes all containers, volumes, and images before rebuilding from scratch.
+
+#### **Check Container Status**
+```sh
+make status
+```
+
+#### **View Container Logs**
+```sh
+make logs
+```
+For a specific container: `make logs c=container_name`
+
 ## **📜 Project Structure**
 ```bash
 📂 sonnet-scripts
 │── 📂 pythonbase/         # Python-based processing container
+│── 📂 pipelinebase/       # ETL pipeline and data ingest container
 │── 📂 linuxbase/          # Base container for Linux dependencies
 │── 🐳 docker-compose.yml  # Container orchestration
 │── 🛠 Makefile            # Automation commands
@@ -116,12 +184,27 @@ Github Actions automates builds, test, and environment validation. The pipeline:
 ## **🤝 Contributing**
 Want to improve Sonnet Scripts? Here's how:
 1. Fork the repository
-2. Make your changes and test them locally.
-3. Submit a pull request (PR) for review.
+2. Make your changes and test them locally
+3. Submit a pull request (PR) for review
 
 For major changes, please open an issue first to discuss your proposal.
 
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages.
+
 ## **📧 Support & Questions**
 
-If you have any questions, feel free to open an issue or reach out!
+Maintained by:
+- [Juan Pablo Urrutia]
+   **GitHub**: [jpurrutia](https://github.com/jpurrutia)
+   **LinkedIn**: [Juan Pablo Urrutia](https://www.linkedin.com/in/jpurrutia/)
+
+- [Mark Freeman]
+   **GitHub**: [onthemarkdata](https://github.com/onthemarkdata)
+   **LinkedIn**:
+
+If you have questions or encounter issues, feel free to:
+- Open a GitHub issue
+- Contact directly via LinkedIn
+- COMING SOON: Join our [Discord community](https://discord.gg/your-invite-link)
+
 🚀 Happy data wrangling!

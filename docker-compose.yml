@@ -10,6 +10,19 @@ services:
         condition: service_completed_successfully
     ports:
       - "4213:4213"
+      
+  pipelinebase:
+    build:
+      context: ./pipelinebase
+    container_name: pipelinebase
+    image: pipelinebase
+    depends_on:
+      pythonbase:
+        condition: service_started
+      pgduckdb:
+        condition: service_healthy
+      minio:
+        condition: service_started
 
   linuxbase:
     build:

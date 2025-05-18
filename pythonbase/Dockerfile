@@ -55,9 +55,6 @@ RUN uv venv --python 3.12.6 /venv && \
 
 # Copy application-specific files
 COPY requirements.txt /apps/requirements.txt
-COPY ingest_claims /apps/ingest_claims
-COPY etl_pipelines /apps/etl_pipelines
-COPY tests /apps/tests
 
 # Run install of requirements
 RUN . /venv/bin/activate && \
