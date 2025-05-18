@@ -23,5 +23,32 @@
       "version": "latest",
       "moby": true
     }
+  },
+  "forwardPorts": [8888, 8080, 9001, 8978, 5432],
+  "portsAttributes": {
+    "8888": {
+      "label": "Jupyter Lab",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    },
+    "8080": {
+      "label": "pgAdmin",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    },
+    "9001": {
+      "label": "MinIO Console",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    },
+    "8978": {
+      "label": "CloudBeaver",
+      "onAutoForward": "openBrowser",
+      "visibility": "public"
+    },
+    "5432": {
+      "label": "Postgres/DuckDB",
+      "visibility": "private"
+    }
   }
 }
