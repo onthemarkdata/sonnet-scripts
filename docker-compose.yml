@@ -1,10 +1,16 @@
 services:
 
+  linuxbase:
+    build:
+      context: ./linuxbase
+    container_name: linuxbase
+    image: linuxbase:latest
+
   pythonbase:
     build:
       context: ./pythonbase
     container_name: pythonbase
-    image: pythonbase
+    image: pythonbase:latest
     depends_on:
       linuxbase:
         condition: service_completed_successfully
@@ -15,7 +21,7 @@ services:
     build:
       context: ./jupyterbase
     container_name: jupyterbase
-    image: jupyterbase
+    image: jupyterbase:latest
     depends_on:
       pythonbase:
         condition: service_started
@@ -28,7 +34,7 @@ services:
     build:
       context: ./pipelinebase
     container_name: pipelinebase
-    image: pipelinebase
+    image: pipelinebase:latest
     depends_on:
       pythonbase:
         condition: service_started
@@ -36,12 +42,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-
-  linuxbase:
-    build:
-      context: ./linuxbase
-    container_name: linuxbase
-    image: linuxbase
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
@@ -102,22 +102,22 @@ services:
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
 
-  cloudbeaver:
-    image: dbeaver/cloudbeaver:25.0.3
-    container_name: cloudbeaver
-    ports:
-      - "8978:8978"
-    volumes:
-      - cloudbeaver-data:/opt/cloudbeaver/workspace
-      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
-      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
-    depends_on:
-      - pgduckdb
+  # cloudbeaver:
+  #   image: dbeaver/cloudbeaver:25.0.3
+  #   container_name: cloudbeaver
+  #   ports:
+  #     - "8978:8978"
+  #   volumes:
+  #     - cloudbeaver-data:/opt/cloudbeaver/workspace
+  #     - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
+  #     - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
+  #   depends_on:
+  #     - pgduckdb
 
 volumes:
   pgduckdb_data:
    driver: local
   data:
    driver: local
-  cloudbeaver-data:
-    driver: local
+  # cloudbeaver-data:
+  #   driver: local

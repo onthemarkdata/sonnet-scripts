@@ -11,7 +11,7 @@ ENV PATH=/venv/bin:$PATH \
     PATH="/root/.local/bin/:$PATH"
 
 # Install uv, curl, and the PostgreSQL client (`psql`)
-RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
+RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip make
 
 # Download UV and MinIO Client (mc) based on architecture
 RUN if [ "$TARGETARCH" = "amd64" ]; then \
