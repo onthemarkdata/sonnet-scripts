@@ -26,4 +26,4 @@ COPY pgduckdb_connect.ipynb /apps/pgduckdb_connect.ipynb
 EXPOSE 8888
 
 # Start Jupyter notebook
-CMD ["/venv/bin/jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+CMD ["/venv/bin/jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]

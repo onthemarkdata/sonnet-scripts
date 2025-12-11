@@ -2,10 +2,9 @@ import pytest
 import psycopg2
 from unittest import mock
 from unittest.mock import MagicMock
-from ingest_claims.db_utils import (
-    connect_to_db,
-    create_claims_table,
-)
+
+from db.postgres import connect_to_db
+from ingest_claims.schema import create_claims_table
 
 
 @pytest.fixture
@@ -24,7 +23,7 @@ def mock_conn(mock_cursor):
 
 def test_connect_to_db_success():
     """Test that connect_to_db successfully connects using a mock."""
-    with mock.patch("psycopg2.connect", return_value=MagicMock()) as mock_connect:
+    with mock.patch("db.postgres.psycopg2.connect", return_value=MagicMock()) as mock_connect:
         conn = connect_to_db()
         assert conn is not None
         mock_connect.assert_called_once()
@@ -32,7 +31,7 @@ def test_connect_to_db_success():
 
 def test_connect_to_db_failure():
     """Test the connect_to_db returns None if connection fails."""
-    with mock.patch("psycopg2.connect", side_effect=psycopg2.OperationalError):
+    with mock.patch("db.postgres.psycopg2.connect", side_effect=psycopg2.OperationalError):
         conn = connect_to_db()
         assert conn is None
 
