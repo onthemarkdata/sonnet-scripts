@@ -1,19 +1,14 @@
-from .db_utils import setup_duckdb_minio_connection
-from minio import Minio
+import config
+from db.duckdb import setup_duckdb_minio_connection
+from db.minio import create_bucket_if_not_exists
+from logging_config import setup_logging
 
-def create_bucket_if_not_exists(bucket_name):
-    client = Minio(
-        endpoint="minio:9000",
-        access_key="admin",
-        secret_key="password",
-        secure=False,
-    )
+logger = setup_logging(__name__)
 
-    if not client.bucket_exists(bucket_name):
-        client.make_bucket(bucket_name)
 
 def export_csv_to_minio(con):
-    bucket_name = 'postgres-data'
+    """Export CSV data to MinIO as Parquet using DuckDB."""
+    bucket_name = config.MINIO_DEFAULT_BUCKET
     create_bucket_if_not_exists(bucket_name)
 
     con.execute(f"""
@@ -21,12 +16,14 @@ def export_csv_to_minio(con):
             SELECT * FROM read_csv_auto('/apps/raw_claims.csv')
         ) TO 's3://{bucket_name}/raw_claims.parquet' (FORMAT PARQUET);
     """)
-    print("CSV successfully converted and uploaded to MinIO.")
+    logger.info("CSV successfully converted and uploaded to MinIO.")
+
 
 def main():
     con = setup_duckdb_minio_connection()
     export_csv_to_minio(con)
     con.close()
+
 
 if __name__ == "__main__":
     main()

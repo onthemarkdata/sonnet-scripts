@@ -9,6 +9,9 @@ RUN uv venv --python 3.12.6 /venv && \
     uv --version
 
 # Copy application files
+COPY config.py /apps/config.py
+COPY logging_config.py /apps/logging_config.py
+COPY db /apps/db
 COPY etl_pipelines /apps/etl_pipelines
 COPY ingest_claims /apps/ingest_claims
 COPY tests /apps/tests
