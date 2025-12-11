@@ -1,0 +1,1871 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.github/
+  workflows/
+    ci_pipeline.yml
+assets/
+  images/
+    sonnet_scripts_banner.png
+jupyterbase/
+  __init__.py
+  Dockerfile
+  jupyter_notebook_config.py
+  pgduckdb_connect.ipynb
+  requirements.txt
+linuxbase/
+  Dockerfile
+pgadmin/
+  pgpass
+  preferences.json
+  servers.json
+pipelinebase/
+  etl_pipelines/
+    __init__.py
+    db_utils.py
+    duckdb_to_minio.py
+    minio_to_duckdb.py
+  ingest_claims/
+    __init__.py
+    db_utils.py
+    load_claims_to_db.py
+  tests/
+    integration/
+      __init__.py
+      test_pipeline.py
+    unit/
+      __init__.py
+      test_db_utils.py
+      test_load_claims_to_db.py
+    __init__.py
+    conftest.py
+  __init__.py
+  Dockerfile
+  requirements.txt
+pythonbase/
+  Dockerfile
+  requirements.txt
+sonnets/
+  healthcare/
+    medicare-claims-synthetic-public-use-files/
+      README.md
+      requirements.txt
+  README.md
+.gitignore
+docker-compose.yml
+LICENSE
+Makefile
+pytest.ini
+README.md
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="jupyterbase/jupyter_notebook_config.py">
+c = get_config()
+
+c.NotebookApp.ip = '0.0.0.0'
+c.NotebookApp.open_browser = False
+c.NotebookApp.port = 8888
+c.NotebookApp.allow_root = True
+
+# Password is literally "password"
+c.NotebookApp.password = 'argon2:$argon2id$v=19$m=10240,t=10,p=8$gZ5o1JVUiXnSk7US+dIoeg$ogbFypNBBRxLPkr+Z36Q+w'
+</file>
+
+<file path="jupyterbase/pgduckdb_connect.ipynb">
+{
+ "cells": [
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "id": "527321f5-1ff0-416d-b990-67d27daccb73",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "hello\n"
+     ]
+    }
+   ],
+   "source": [
+    "print('hello')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "475a1233-de42-4a35-972f-33c097c1f4e6",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3 (ipykernel)",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.12.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
+</file>
+
+<file path="jupyterbase/requirements.txt">
+duckdb==1.2.2
+pandas==2.2.3
+jupyterlab==4.4.2
+</file>
+
+<file path="pgadmin/pgpass">
+pgduckdb:5432:postgres:postgres:postgres
+</file>
+
+<file path="pgadmin/preferences.json">
+{
+    "preferences": {
+        "browser:display:auto_expand_sole_children": true,
+        "browser:display:confirm_on_properties_close": true,
+        "browser:display:confirm_on_refresh_close": true,
+        "browser:display:browser_tree_state_save_interval": 30,
+        "browser:display:show_system_objects": false,
+        "browser:display:show_user_defined_templates": false,
+        "browser:node:show_node_aggregate": false,
+        "browser:node:show_node_cast": false,
+        "browser:node:show_node_catalog_object": false,
+        "browser:node:show_node_catalog": false,
+        "browser:node:show_node_check_constraint": false,
+        "browser:node:show_node_collation": false,
+        "browser:node:show_node_column": true,
+        "browser:node:show_node_foreign_table_column": false,
+        "browser:node:show_node_compound_trigger": false,
+        "browser:node:show_node_constraints": false,
+        "browser:node:show_node_dbms_job_scheduler": false,
+        "browser:node:show_node_dbms_job": false,
+        "browser:node:show_node_dbms_program": false,
+        "browser:node:show_node_dbms_schedule": false,
+        "browser:node:show_node_database": true,
+        "browser:node:show_node_directory": false,
+        "browser:node:show_node_domain_constraints": false,
+        "browser:node:show_node_domain": false,
+        "browser:node:show_node_event_trigger": false,
+        "browser:node:show_node_exclusion_constraint": false,
+        "browser:node:show_node_extension": false,
+        "browser:node:show_node_fts_configuration": false,
+        "browser:node:show_node_fts_dictionary": false,
+        "browser:node:show_node_fts_parser": false,
+        "browser:node:show_node_fts_template": false,
+        "browser:node:show_node_foreign_data_wrapper": false,
+        "browser:node:show_node_foreign_key": false,
+        "browser:node:show_node_foreign_server": false,
+        "browser:node:show_node_foreign_table": false,
+        "browser:node:show_node_function": false,
+        "browser:node:show_node_index": false,
+        "browser:node:show_node_language": false,
+        "browser:node:show_node_role": false,
+        "browser:node:show_node_mview": false,
+        "browser:node:show_node_operator": false,
+        "browser:node:show_node_pgd_replication_groups": false,
+        "browser:node:show_node_edbfunc": false,
+        "browser:node:show_node_edbproc": false,
+        "browser:node:show_node_package": false,
+        "browser:node:show_node_partition": false,
+        "browser:node:show_node_primary_key": false,
+        "browser:node:show_node_procedure": false,
+        "browser:node:show_node_publication": false,
+        "browser:node:show_node_row_security_policy": false,
+        "browser:node:show_node_replica_nodes": false,
+        "browser:node:show_node_resource_group": false,
+        "browser:node:show_node_rule": false,
+        "browser:node:show_node_pga_schedule": false,
+        "browser:node:show_node_schema": true,
+        "browser:node:show_node_sequence": false,
+        "browser:node:show_node_pgd_replication_servers": false,
+        "browser:node:show_node_pga_jobstep": false,
+        "browser:node:show_node_subscription": false,
+        "browser:node:show_node_synonym": false,
+        "browser:node:show_node_table": true,
+        "browser:node:show_node_tablespace": false,
+        "browser:node:show_node_trigger_function": false,
+        "browser:node:show_node_trigger": false,
+        "browser:node:show_node_type": false,
+        "browser:node:show_node_unique_constraint": false,
+        "browser:node:show_node_user_mapping": false,
+        "browser:node:show_node_edbvar": false,
+        "browser:node:show_node_view": true,
+        "browser:node:show_node_pga_job": false,
+        "browser:display:show_empty_coll_nodes": false,
+        "browser:tab_settings:new_browser_tab_open": "query_tool",
+        "misc:user_interface:theme": "system",
+        "misc:user_interface:layout": "classic"
+    }
+}
+</file>
+
+<file path="pgadmin/servers.json">
+{
+    "Servers": {
+        "1": {
+            "Name": "pgduckdb",
+            "Group": "Servers",
+            "Host": "pgduckdb",
+            "Port": 5432,
+            "MaintenanceDB": "postgres",
+            "Username": "postgres",
+            "PassFile": "/pgadmin4/pgpass",
+            "SSLMode": "prefer"
+        }
+    }
+}
+</file>
+
+<file path="pipelinebase/etl_pipelines/db_utils.py">
+import duckdb
+from minio import Minio
+
+def setup_duckdb_minio_connection():
+    """Configure DuckDB connection to MinIO and use persistent database."""
+    con = duckdb.connect('/apps/my_database.duckdb')  # <-- Explicit persistent database file
+    con.execute("INSTALL httpfs;")
+    con.execute("LOAD httpfs;")
+    con.execute("""
+        SET s3_endpoint='minio:9000';
+        SET s3_access_key_id='admin';
+        SET s3_secret_access_key='password';
+        SET s3_use_ssl=false;
+        SET s3_url_style='path';
+    """)
+    return con
+</file>
+
+<file path="pipelinebase/etl_pipelines/duckdb_to_minio.py">
+from .db_utils import setup_duckdb_minio_connection
+from minio import Minio
+
+def create_bucket_if_not_exists(bucket_name):
+    client = Minio(
+        endpoint="minio:9000",
+        access_key="admin",
+        secret_key="password",
+        secure=False,
+    )
+
+    if not client.bucket_exists(bucket_name):
+        client.make_bucket(bucket_name)
+
+def export_csv_to_minio(con):
+    bucket_name = 'postgres-data'
+    create_bucket_if_not_exists(bucket_name)
+
+    con.execute(f"""
+        COPY (
+            SELECT * FROM read_csv_auto('/apps/raw_claims.csv')
+        ) TO 's3://{bucket_name}/raw_claims.parquet' (FORMAT PARQUET);
+    """)
+    print("CSV successfully converted and uploaded to MinIO.")
+
+def main():
+    con = setup_duckdb_minio_connection()
+    export_csv_to_minio(con)
+    con.close()
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="pipelinebase/etl_pipelines/minio_to_duckdb.py">
+from .db_utils import setup_duckdb_minio_connection
+
+def import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table):
+    minio_url = f"s3://{bucket_name}/{parquet_file}"
+    con.execute(f"""
+        CREATE TABLE IF NOT EXISTS {duckdb_table} AS
+        SELECT * FROM read_parquet('{minio_url}');
+    """)
+    print(f"Successfully imported '{minio_url}' into DuckDB table '{duckdb_table}'.")
+
+def main():
+    con = setup_duckdb_minio_connection()
+    bucket_name = 'postgres-data'
+    parquet_file = 'raw_claims.parquet'
+    duckdb_table = 'raw_claims'
+    
+    import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table)
+    con.close()
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="pipelinebase/ingest_claims/db_utils.py">
+from io import StringIO
+import os
+
+import psycopg2
+
+
+def connect_to_db():
+    try:
+        # Use environment variables for configuration
+        connection = psycopg2.connect(
+            dbname=os.getenv("DB_NAME", "postgres"),
+            user=os.getenv("DB_USER", "postgres"),
+            password=os.getenv("DB_PASSWORD", "postgres"),
+            host=os.getenv("DB_HOST", "pgduckdb"),  # Use "db" as the hostname
+            port=os.getenv("DB_PORT", 5432),
+        )
+        return connection
+    except Exception as e:
+        print(f"The error '{e}' occurred.")
+        return None
+
+
+def copy_csv_to_db(conn, csv_file, table_name):
+    with conn.cursor() as cur:
+        with open(csv_file, "r") as file:
+            cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", file)
+        conn.commit()
+        print(f"Copied data from {csv_file} into the {table_name} table.")
+
+
+def create_claims_table(cur):
+    ddl_statement = """
+        CREATE TABLE IF NOT EXISTS raw_claims (
+            DESYNPUF_ID TEXT,
+            CLM_ID TEXT,
+            CLM_FROM_DT TEXT,
+            CLM_THRU_DT TEXT,
+            ICD9_DGNS_CD_1 TEXT,
+            ICD9_DGNS_CD_2 TEXT,
+            ICD9_DGNS_CD_3 TEXT,
+            ICD9_DGNS_CD_4 TEXT,
+            ICD9_DGNS_CD_5 TEXT,
+            ICD9_DGNS_CD_6 TEXT,
+            ICD9_DGNS_CD_7 TEXT,
+            ICD9_DGNS_CD_8 TEXT,
+            PRF_PHYSN_NPI_1 TEXT,
+            PRF_PHYSN_NPI_2 TEXT,
+            PRF_PHYSN_NPI_3 TEXT,
+            PRF_PHYSN_NPI_4 TEXT,
+            PRF_PHYSN_NPI_5 TEXT,
+            PRF_PHYSN_NPI_6 TEXT,
+            PRF_PHYSN_NPI_7 TEXT,
+            PRF_PHYSN_NPI_8 TEXT,
+            PRF_PHYSN_NPI_9 TEXT,
+            PRF_PHYSN_NPI_10 TEXT,
+            PRF_PHYSN_NPI_11 TEXT,
+            PRF_PHYSN_NPI_12 TEXT,
+            PRF_PHYSN_NPI_13 TEXT,
+            TAX_NUM_1 TEXT,
+            TAX_NUM_2 TEXT,
+            TAX_NUM_3 TEXT,
+            TAX_NUM_4 TEXT,
+            TAX_NUM_5 TEXT,
+            TAX_NUM_6 TEXT,
+            TAX_NUM_7 TEXT,
+            TAX_NUM_8 TEXT,
+            TAX_NUM_9 TEXT,
+            TAX_NUM_10 TEXT,
+            TAX_NUM_11 TEXT,
+            TAX_NUM_12 TEXT,
+            TAX_NUM_13 TEXT,
+            HCPCS_CD_1 TEXT,
+            HCPCS_CD_2 TEXT,
+            HCPCS_CD_3 TEXT,
+            HCPCS_CD_4 TEXT,
+            HCPCS_CD_5 TEXT,
+            HCPCS_CD_6 TEXT,
+            HCPCS_CD_7 TEXT,
+            HCPCS_CD_8 TEXT,
+            HCPCS_CD_9 TEXT,
+            HCPCS_CD_10 TEXT,
+            HCPCS_CD_11 TEXT,
+            HCPCS_CD_12 TEXT,
+            HCPCS_CD_13 TEXT,
+            LINE_NCH_PMT_AMT_1 TEXT,
+            LINE_NCH_PMT_AMT_2 TEXT,
+            LINE_NCH_PMT_AMT_3 TEXT,
+            LINE_NCH_PMT_AMT_4 TEXT,
+            LINE_NCH_PMT_AMT_5 TEXT,
+            LINE_NCH_PMT_AMT_6 TEXT,
+            LINE_NCH_PMT_AMT_7 TEXT,
+            LINE_NCH_PMT_AMT_8 TEXT,
+            LINE_NCH_PMT_AMT_9 TEXT,
+            LINE_NCH_PMT_AMT_10 TEXT,
+            LINE_NCH_PMT_AMT_11 TEXT,
+            LINE_NCH_PMT_AMT_12 TEXT,
+            LINE_NCH_PMT_AMT_13 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_1 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_2 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_3 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_4 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_5 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_6 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_7 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_8 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_9 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_10 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_11 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_12 TEXT,
+            LINE_BENE_PTB_DDCTBL_AMT_13 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_1 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_2 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_3 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_4 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_5 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_6 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_7 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_8 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_9 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_10 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_11 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_12 TEXT,
+            LINE_BENE_PRMRY_PYR_PD_AMT_13 TEXT,
+            LINE_COINSRNC_AMT_1 TEXT,
+            LINE_COINSRNC_AMT_2 TEXT,
+            LINE_COINSRNC_AMT_3 TEXT,
+            LINE_COINSRNC_AMT_4 TEXT,
+            LINE_COINSRNC_AMT_5 TEXT,
+            LINE_COINSRNC_AMT_6 TEXT,
+            LINE_COINSRNC_AMT_7 TEXT,
+            LINE_COINSRNC_AMT_8 TEXT,
+            LINE_COINSRNC_AMT_9 TEXT,
+            LINE_COINSRNC_AMT_10 TEXT,
+            LINE_COINSRNC_AMT_11 TEXT,
+            LINE_COINSRNC_AMT_12 TEXT,
+            LINE_COINSRNC_AMT_13 TEXT,
+            LINE_ALOWD_CHRG_AMT_1 TEXT,
+            LINE_ALOWD_CHRG_AMT_2 TEXT,
+            LINE_ALOWD_CHRG_AMT_3 TEXT,
+            LINE_ALOWD_CHRG_AMT_4 TEXT,
+            LINE_ALOWD_CHRG_AMT_5 TEXT,
+            LINE_ALOWD_CHRG_AMT_6 TEXT,
+            LINE_ALOWD_CHRG_AMT_7 TEXT,
+            LINE_ALOWD_CHRG_AMT_8 TEXT,
+            LINE_ALOWD_CHRG_AMT_9 TEXT,
+            LINE_ALOWD_CHRG_AMT_10 TEXT,
+            LINE_ALOWD_CHRG_AMT_11 TEXT,
+            LINE_ALOWD_CHRG_AMT_12 TEXT,
+            LINE_ALOWD_CHRG_AMT_13 TEXT,
+            LINE_PRCSG_IND_CD_1 TEXT,
+            LINE_PRCSG_IND_CD_2 TEXT,
+            LINE_PRCSG_IND_CD_3 TEXT,
+            LINE_PRCSG_IND_CD_4 TEXT,
+            LINE_PRCSG_IND_CD_5 TEXT,
+            LINE_PRCSG_IND_CD_6 TEXT,
+            LINE_PRCSG_IND_CD_7 TEXT,
+            LINE_PRCSG_IND_CD_8 TEXT,
+            LINE_PRCSG_IND_CD_9 TEXT,
+            LINE_PRCSG_IND_CD_10 TEXT,
+            LINE_PRCSG_IND_CD_11 TEXT,
+            LINE_PRCSG_IND_CD_12 TEXT,
+            LINE_PRCSG_IND_CD_13 TEXT,
+            LINE_ICD9_DGNS_CD_1 TEXT,
+            LINE_ICD9_DGNS_CD_2 TEXT,
+            LINE_ICD9_DGNS_CD_3 TEXT,
+            LINE_ICD9_DGNS_CD_4 TEXT,
+            LINE_ICD9_DGNS_CD_5 TEXT,
+            LINE_ICD9_DGNS_CD_6 TEXT,
+            LINE_ICD9_DGNS_CD_7 TEXT,
+            LINE_ICD9_DGNS_CD_8 TEXT,
+            LINE_ICD9_DGNS_CD_9 TEXT,
+            LINE_ICD9_DGNS_CD_10 TEXT,
+            LINE_ICD9_DGNS_CD_11 TEXT,
+            LINE_ICD9_DGNS_CD_12 TEXT,
+            LINE_ICD9_DGNS_CD_13 TEXT
+            );
+        """
+    cur.execute(ddl_statement)
+</file>
+
+<file path="pipelinebase/ingest_claims/load_claims_to_db.py">
+import os
+import requests
+import zipfile
+
+import pandas as pd
+
+from ingest_claims.db_utils import connect_to_db, create_claims_table, copy_csv_to_db
+
+url = "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip"
+
+zip_file_name = "claims.zip"
+csv_file_name = "claims.csv"
+
+
+def download_file(url, zip_file_name):
+    response = requests.get(url, stream=True)
+    if response.status_code == 200:
+        with open(zip_file_name, "wb") as file:
+            for chunk in response.iter_content(chunk_size=8192):
+                file.write(chunk)
+        print(f"{zip_file_name} downloaded successfully.")
+    else:
+        raise Exception(
+            f"Failed to download the file. Status code: {response.status_code}"
+        )
+
+    return
+
+
+def extract_zip_file(zip_file_name, extract_to="."):
+    with zipfile.ZipFile(zip_file_name, "r") as zip_ref:
+        zip_ref.extractall(extract_to)
+        extracted_files = zip_ref.namelist()
+        print(f"Extraced files: {zip_ref.namelist()}")
+    return extracted_files
+
+
+def rename_csv_file(original_csv_name, csv_file_name):
+    if os.path.exists(original_csv_name):
+        os.rename(original_csv_name, csv_file_name)
+        print(f"Renamed {original_csv_name} to {csv_file_name}.")
+    else:
+        raise FileNotFoundError(f"{original_csv_name} not found in extracted files.")
+
+
+def cleanup_files(*files):
+    for file in files:
+        if os.path.exists(file):
+            os.remove(file)
+            print(f"Removed {file}.")
+    return
+
+
+def main():
+
+    zip_file_name = "claims.zip"
+    csv_file_name = "claims.csv"
+    original_csv_name = "DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.csv"
+    url = (
+        "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip"
+    )
+
+    db = None
+
+    try:
+        # Download the file
+        download_file(url, zip_file_name)
+
+        # Extract Zip File
+        extract_zip_file(zip_file_name)
+        rename_csv_file(original_csv_name, csv_file_name)
+        cleanup_files(zip_file_name)
+
+        # Connect to the Database
+        print("Connecting to the database...")
+        db = connect_to_db()
+
+        with db.cursor() as cur:
+            create_claims_table(cur)
+            db.commit()
+
+        # Copy the dataframe to the database
+        print("Copying data to the database...")
+        copy_csv_to_db(db, csv_file_name, "raw_claims")
+
+        print("Data ingestion completed successfully.")
+
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        if db:
+            db.rollback()
+    finally:
+        # Cleanup resources
+        # cleanup_files(csv_file_name)
+        # print("Removed the CSV file.")
+        print("Not removing the CSV file.")
+
+        if db:
+            print("Closing the database connection.")
+            db.close()
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="pipelinebase/tests/integration/test_pipeline.py">
+import pytest
+import psycopg2
+import os
+from ingest_claims.load_claims_to_db import main
+from ingest_claims.db_utils import connect_to_db
+
+
+@pytest.fixture(scope="module")
+def test_db():
+    """Fixture to set up and tear down a real test database."""
+    os.environ["DB_HOST"] = "pgduckdb"
+    conn = connect_to_db()
+    yield conn
+    conn.close()
+
+
+def test_end_to_end_pipeline(test_db):
+    """Test the full ingestion pipeline."""
+    # Run the full pipeline
+    main()
+
+    # Verify that the raw_claims table contains data
+    with test_db.cursor() as cur:
+        cur.execute("SELECT COUNT(*) FROM raw_claims")
+        result = cur.fetchone()
+        assert result[0] > 0, "No data was inserted into raw_claims!"
+</file>
+
+<file path="pipelinebase/tests/unit/test_db_utils.py">
+import pytest
+import psycopg2
+from unittest import mock
+from unittest.mock import MagicMock
+from ingest_claims.db_utils import (
+    connect_to_db,
+    create_claims_table,
+)
+
+
+@pytest.fixture
+def mock_cursor():
+    """Fixture for a mocked database cursor."""
+    return MagicMock()
+
+
+@pytest.fixture
+def mock_conn(mock_cursor):
+    """Fixture for a mocked database connection."""
+    mock_conn = MagicMock()
+    mock_conn.cursor.return_value.__enter__.return_value = mock_cursor
+    return mock_conn
+
+
+def test_connect_to_db_success():
+    """Test that connect_to_db successfully connects using a mock."""
+    with mock.patch("psycopg2.connect", return_value=MagicMock()) as mock_connect:
+        conn = connect_to_db()
+        assert conn is not None
+        mock_connect.assert_called_once()
+
+
+def test_connect_to_db_failure():
+    """Test the connect_to_db returns None if connection fails."""
+    with mock.patch("psycopg2.connect", side_effect=psycopg2.OperationalError):
+        conn = connect_to_db()
+        assert conn is None
+
+
+def test_create_claims_table(mock_conn, mock_cursor):
+    """Test that create_claims_table executes a SQL query."""
+    create_claims_table(mock_cursor)
+    mock_cursor.execute.assert_called_once()
+    assert (
+        "CREATE TABLE IF NOT EXISTS raw_claims" in mock_cursor.execute.call_args[0][0]
+    )
+</file>
+
+<file path="pipelinebase/tests/unit/test_load_claims_to_db.py">
+import pytest
+import os
+import requests
+import zipfile
+from unittest import mock
+from unittest.mock import MagicMock
+from ingest_claims.load_claims_to_db import (
+    download_file,
+    extract_zip_file,
+    rename_csv_file,
+    cleanup_files,
+)
+
+
+@pytest.fixture
+def temp_file(tmp_path):
+    """Create a temp file for testing."""
+    file = tmp_path / "test_file.txt"
+    file.write_text("dummy content")
+    return file
+
+
+def test_download_file_success(mocker, tmp_path):
+    mock_response = MagicMock()
+    mock_response.status_code = 200
+    mock_response.iter_content = lambda chunk_size: [b"data"]
+
+    mocker.patch("requests.get", return_value=mock_response)
+
+    test_file = tmp_path / "test_download.zip"
+    download_file("http://example.com/file.zip", test_file)
+
+    assert os.path.exists(test_file)
+
+
+def test_download_file_failure(mocker):
+    """Test download failure handling."""
+    mock_response = MagicMock()
+    mock_response.status_code = 404
+    mocker.patch("requests.get", return_value=mock_response)
+
+    with pytest.raises(Exception, match="Failed to download the file"):
+        download_file("http://example.com/file.zip", "claims.zip")
+
+
+def test_extract_zip_file(mocker, tmp_path):
+    """Test zip extraction."""
+
+    mock_zip = MagicMock()
+    mock_zip.__enter__.return_value.namelist.return_value = ["test.csv"]
+    mock_zip.__enter__.return_value.extractall = MagicMock()  # ✅ Add this!
+
+    mocker.patch("zipfile.ZipFile", return_value=mock_zip)
+
+    extracted_files = extract_zip_file("claims.zip", tmp_path)
+
+    assert extracted_files == ["test.csv"]
+    mock_zip.__enter__.return_value.extractall.assert_called_once_with(tmp_path)
+
+
+def test_rename_csv_file_success(tmp_path):
+    """Test renaming an existing CSV file."""
+    original = tmp_path / "priginal.csv"
+    renamed = tmp_path / "renamed.csv"
+
+    original.write_text("test data")
+
+    rename_csv_file(original, renamed)
+
+    assert not original.exists()
+    assert renamed.exists()
+
+
+def test_rename_csv_file_missing():
+    """Test renaming a missing file."""
+    with pytest.raises(FileNotFoundError):
+        rename_csv_file("missing.csv", "new.csv")
+
+
+def test_cleanup_files(tmp_path):
+    """Test cleanup removes files."""
+    file1 = tmp_path / "file1.txt"
+    file2 = tmp_path / "file2.txt"
+
+    file1.write_text("data")
+    file2.write_text("data")
+
+    cleanup_files(file1, file2)
+
+    assert not file1.exists()
+    assert not file2.exists()
+</file>
+
+<file path="pipelinebase/tests/__init__.py">
+from ingest_claims.db_utils import connect_to_db
+</file>
+
+<file path="pipelinebase/Dockerfile">
+FROM pythonbase:latest
+
+# Set the Working Directory
+WORKDIR /apps
+
+# Set up a virtual env to use for whatever app is destined for this container.
+RUN uv venv --python 3.12.6 /venv && \
+    echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
+    uv --version
+
+# Copy application files
+COPY etl_pipelines /apps/etl_pipelines
+COPY ingest_claims /apps/ingest_claims
+COPY tests /apps/tests
+COPY requirements.txt /apps/requirements.txt
+
+# Install requirements
+RUN . /venv/bin/activate && \
+    uv pip install --upgrade -r /apps/requirements.txt
+
+# Create empty __init__.py files to ensure proper module structure
+RUN touch /apps/__init__.py
+RUN touch /apps/tests/__init__.py
+</file>
+
+<file path="pipelinebase/requirements.txt">
+duckdb==1.2.2
+minio==7.2.15
+pandas==2.2.3
+psycopg2-binary==2.9.10
+pytest==8.3.5
+pytest-mock==3.14.0
+requests==2.32.3
+ruff==0.11.9
+</file>
+
+<file path="sonnets/healthcare/medicare-claims-synthetic-public-use-files/README.md">
+# Medicare Claims Synthetic Public Use Files (SynPUFs)
+Source: https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files
+</file>
+
+<file path="sonnets/README.md">
+
+</file>
+
+<file path="pytest.ini">
+[pytest]
+pythonpath = pythonbase
+</file>
+
+<file path="jupyterbase/Dockerfile">
+FROM pythonbase:latest
+
+# Set the Working Directory
+WORKDIR /apps
+
+# Set up virtual environment
+RUN uv venv --python 3.12.6 /venv && \
+    echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
+    uv --version
+
+# Copy and install Python dependencies
+COPY requirements.txt /apps/requirements.txt
+RUN . /venv/bin/activate && \
+    uv pip install --upgrade -r /apps/requirements.txt
+
+# Ensure module structure (optional but recommended)
+RUN touch /apps/__init__.py
+
+# Copy Jupyter config file into Docker container
+COPY jupyter_notebook_config.py /root/.jupyter/jupyter_notebook_config.py
+
+# Copy preset notebook to connect to pgduckdb
+COPY pgduckdb_connect.ipynb /apps/pgduckdb_connect.ipynb
+
+# Expose the Jupyter port
+EXPOSE 8888
+
+# Start Jupyter notebook
+CMD ["/venv/bin/jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+</file>
+
+<file path=".gitignore">
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environment directories
+venv/
+.env/
+
+# Ignore logs and temporary files
+*.log
+*.tmp
+
+# Ignore compiled Python files
+*.so
+
+# Ignore data files that should not be committed
+data/
+*.csv
+
+# Ignore pytest cache
+tests/__pycache__/
+.pytest_cache/
+
+# Ignore Docker build artifacts
+dist/
+build/
+*.tar
+*.gz
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore GitHub Actions temporary files
+.github/workflows/*.log
+
+# Ignore Docker Compose volumes and logs
+docker-compose.override.yml
+**/pgduckdb_data/
+**/minio_data/
+
+# Ignore all hidden files (except .gitignore and .github)
+.*
+!.gitignore
+!.github/
+</file>
+
+<file path="LICENSE">
+Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+</file>
+
+<file path="linuxbase/Dockerfile">
+FROM --platform=$BUILDPLATFORM ubuntu:24.04 AS builder
+
+# Set build arguments for cross-compilation
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+ARG TARGETARCH
+RUN echo "Sonnet Scripts running on $BUILDPLATFORM, building for $TARGETPLATFORM"
+
+# Set environment variables for localization and timezone settings
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ="America/Chicago" \
+    DEBIAN_FRONTEND=noninteractive
+
+# Update and install required packages for common build dependencies
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    locales git curl wget vim bash unzip \
+    gcc build-essential openssl ca-certificates && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# (Placeholder) Insert cross-compilation-specific build commands here
+# RUN if [ "$TARGETARCH" = "arm64" ]; then \
+#       echo "Compiling ARM-specific binaries..."; \
+#     elif [ "$TARGETARCH" = "amd64" ]; then \
+#       echo "Compiling AMD-specific binaries..."; \
+#     fi
+
+# Final multi-platform image
+FROM --platform=$TARGETPLATFORM ubuntu:24.04
+
+# Copy artifacts from builder stage if applicable
+COPY --from=builder /bin/bash /usr/local/bin/
+
+# Install runtime dependencies if necessary
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    locales ca-certificates && \
+    locale-gen en_US.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+CMD ["/bin/bash"]
+</file>
+
+<file path="pythonbase/requirements.txt">
+# Base Python requirements
+flask==3.1.1
+pydantic==2.11.4
+requests==2.32.3
+ruff==0.11.9
+
+# DuckDB is installed system-wide in Dockerfile
+# Only include packages needed for pythonbase as a general-purpose base image
+</file>
+
+<file path=".github/workflows/ci_pipeline.yml">
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install Dependencies
+        run: pip install -r pythonbase/requirements.txt
+
+      - name: Build Docker Images
+        run: |
+          docker build -t linuxbase linuxbase
+          docker build -t pythonbase pythonbase
+
+      - name: Start Docker Compose
+        run: docker compose up -d --build  # Ensures it uses local builds
+
+      - name: Wait for PostgreSQL to be Ready
+        run: |
+          echo "Waiting for PostgreSQL..."
+          CONTAINER_ID=$(docker ps --filter "name=pgduckdb" --format "{{.ID}}")
+
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Error: PostgreSQL container not found!"
+            docker ps
+            exit 1
+          fi
+
+          until docker exec "$CONTAINER_ID" pg_isready -U postgres; do
+            sleep 3
+          done
+
+          echo "PostgreSQL is ready!"
+</file>
+
+<file path="pythonbase/Dockerfile">
+FROM linuxbase AS pythonbase
+
+RUN mkdir /apps
+
+# Set build arguments for cross-compilation
+ARG TARGETARCH
+
+# Set environment variables
+ENV PATH=/venv/bin:$PATH \
+    PATH=/root/.cargo/bin:$PATH \
+    PATH="/root/.local/bin/:$PATH"
+
+# Install uv, curl, and the PostgreSQL client (`psql`)
+RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
+
+# Download UV and MinIO Client (mc) based on architecture
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        curl -LsSf https://astral.sh/uv/install.sh | sh \
+        && curl -O https://dl.min.io/client/mc/release/linux-amd64/mc \
+        && chmod +x mc \
+        && mv mc /usr/local/bin/; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        curl -LsSf https://astral.sh/uv/install.sh | sh \
+        && curl -O https://dl.min.io/client/mc/release/linux-arm64/mc \
+        && chmod +x mc \
+        && mv mc /usr/local/bin/; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
+    fi
+
+# Install DuckDB
+ARG DUCKDB_VERSION="v1.2.2"
+
+RUN set -eux; \
+    apt-get update && apt-get install -y --no-install-recommends \
+        curl ca-certificates gzip && \
+    rm -rf /var/lib/apt/lists/* && \
+    # pick the correct pre‑built binary for the platform
+    if [ "$TARGETARCH" = "amd64" ]; then \
+        DUCKDB_DIST="linux-amd64"; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        DUCKDB_DIST="linux-arm64"; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
+    fi && \
+    curl -fsSL "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-${DUCKDB_DIST}.gz" \
+      | gunzip -c > /usr/local/bin/duckdb && \
+    chmod +x /usr/local/bin/duckdb && \
+    duckdb --version   # quick sanity check
+
+# Set up a virtual env to use for whatever app is destined for this container.
+RUN uv venv --python 3.12.6 /venv && \
+    echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
+    uv --version
+
+# Copy application-specific files
+COPY requirements.txt /apps/requirements.txt
+
+# Run install of requirements
+RUN . /venv/bin/activate && \
+    uv pip install --upgrade -r /apps/requirements.txt && \
+    uv pip install --upgrade granian[pname]
+
+RUN echo "We're good:" && \
+    /venv/bin/python --version
+
+CMD ["tail", "-f", "/dev/null"]
+</file>
+
+<file path="README.md">
+![](./assets/images/sonnet_scripts_banner.png)
+
+⚠️ Unstable: Project Still Under Development ⚠️
+
+# Sonnet Scripts
+Sonnet Scripts is a collection of pre-built data architecture patterns that you can quickly spin up on a local machine, along with examples of real-world data that you can use with it.
+
+## Why was Sonnet Scripts created?
+One of the challenges of making content and tutorials on data is the lack of established data infrastructure and real-world datasets. I have often found myself repeating this process over and over again, therefore we decided to create an open-source repo to expedite this process.
+
+## Why sonnets?
+[According to the Academy of American Poets](https://poets.org/glossary/sonnet), a "...sonnet is a fourteen-line poem written in iambic pentameter, employing one of several rhyme schemes, and adhering to a tightly structured thematic organization." Through the constraints of a particular sonnet format, poets throughout centuries have pushed their creativity to express themselves-- William Shakespear being one of the most well-known. I've similarly seen data architectures fill the same role as a sonnet, where their specific patterns push data practioners to think of creative ways to solve business problems.
+
+
+
+## How to use Sonnet Scripts
+
+
+# 🏗 Sonnet Scripts - Data & Analytics Sandbox
+
+## **Introduction**
+Welcome to **Sonnet Scripts** – a fully containerized environment designed for **data analysts, analytics engineers, and data engineers** to experiment with databases, queries, and ETL pipelines. This repository provides a **pre-configured sandbox** where users can ingest data, transform it using SQL/Python, and test integrations with **PostgreSQL, DuckDB, MinIO** and more!
+
+## **Who is this for?**
+This project is ideal for:
+- **Data Engineers** who want a lightweight environment for testing data pipelines.
+- **Analytics Engineers** experimenting with dbt and SQL transformations.
+- **Data Analysts** looking for a structured PostgreSQL + DuckDB setup.
+- **Developers** working on **data APIs** using Python.
+
+---
+
+## **🛠 Prerequisites**
+Before setting up the environment, ensure you have the following installed:
+
+1. **Docker & Docker Compose**
+   - [Install Docker](https://docs.docker.com/get-docker/)
+   - [Install Docker Compose](https://docs.docker.com/compose/install/)
+
+2. **[Make](https://www.gnu.org/software/make/) (for automation)**
+   - Linux/macOS: Comes pre-installed
+   - Windows: Install via [Chocolatey](https://chocolatey.org/install) → `choco install make`
+
+3. **Python (3.12+)**
+   - [Install Python](https://www.python.org/downloads/)
+
+---
+
+## **🚀 Quick Start**
+### **1️⃣ Clone the Repository**
+```sh
+git clone https://github.com/onthemarkdata/sonnet-scripts.git
+cd sonnet-scrips
+```
+
+### **2️⃣ Start the Environment**
+```sh
+make setup
+```
+This will:
+- Build the Docker images
+- Start the PostgreSQL, DuckDB, and other containers
+- Ensure dependencies are installed
+
+### **3️⃣ Load Sample Data**
+```sh
+make load-db
+```
+
+### **4️⃣ Verify Data Loaded into Database**
+```sh
+make verify-db
+```
+
+### **5️⃣ Run Tests**
+```sh
+make test
+```
+
+### **6️⃣ Access the PythonBase Command Line Interface (CLI)**
+```sh
+make exec-pythonbase
+```
+
+### **7️⃣ Access the PostgreSQL Database**
+```sh
+make exec-postgres
+```
+
+### **8️⃣ Access the DuckDB CLI**
+```sh
+make exec-duckdb
+```
+
+### **9️⃣ Access the Pipeline Container CLI**
+```sh
+make exec-pipelinebase
+```
+
+### **🔄 Data Pipeline Commands**
+
+#### **Export Data from PostgreSQL to MinIO**
+```sh
+make load-db-postgres-to-minio
+```
+This command:
+- Exports a sample of data from PostgreSQL to CSV
+- Transfers the CSV to the pipelinebase container
+- Converts the CSV to Parquet and uploads to MinIO
+- Cleans up temporary files
+
+#### **Import Data from MinIO to DuckDB**
+```sh
+make load-db-minio-to-duckdb
+```
+
+#### **Check MinIO Status and Contents**
+```sh
+make check-minio
+```
+
+#### **Verify Data in DuckDB**
+```sh
+make check-duckdb
+```
+
+#### **Run the Complete Data Pipeline**
+```sh
+make run-all-data-pipelines
+```
+This runs the entire ETL process from PostgreSQL to MinIO to DuckDB.
+
+### **🧹 Environment Management**
+
+#### **Stop All Containers**
+```sh
+make stop
+```
+
+#### **Rebuild Containers**
+```sh
+make rebuild
+```
+
+#### **Complete Rebuild (Clean)**
+```sh
+make rebuild-clean
+```
+This removes all containers, volumes, and images before rebuilding from scratch.
+
+#### **Check Container Status**
+```sh
+make status
+```
+
+#### **View Container Logs**
+```sh
+make logs
+```
+For a specific container: `make logs c=container_name`
+
+## **📜 Project Structure**
+```bash
+📂 sonnet-scripts
+│── 📂 pythonbase/         # Python-based processing container
+│── 📂 pipelinebase/       # ETL pipeline and data ingest container
+│── 📂 linuxbase/          # Base container for Linux dependencies
+│── 📂 jupyterbase/        # Jupyter container for analytics and data science
+│── 🐳 docker-compose.yml  # Container orchestration
+│── 🛠 Makefile            # Automation commands
+│── 📜 README.md           # You are here!
+```
+
+## **🛠 CI/CD Pipeline**
+Github Actions automates builds, test, and environment validation. The pipeline:
+1. Builds Docker images (`pythonbase`, `linuxbase`)
+2. Starts all services using `docker compose`
+3. Runs unit & integration tests (`make test`)
+4. Shuts down containers after test pass.
+
+#### **✅ CI is triggered on:**
+- Push to `main` or `feature/*`
+- Pull Requests to `main`
+
+## **🤝 Contributing**
+Want to improve Sonnet Scripts? Here's how:
+1. Fork the repository
+2. Make your changes and test them locally
+3. Submit a pull request (PR) for review
+
+For major changes, please open an issue first to discuss your proposal.
+
+We follow [Conventional Commits](https://www.conventionalcommits.org/) for all commit messages.
+
+## **📧 Support & Questions**
+
+Maintained by:
+- [Juan Pablo Urrutia]
+   **GitHub**: [jpurrutia](https://github.com/jpurrutia)
+   **LinkedIn**: [Juan Pablo Urrutia](https://www.linkedin.com/in/jpurrutia/)
+
+- [Mark Freeman]
+   **GitHub**: [onthemarkdata](https://github.com/onthemarkdata)
+   **LinkedIn**:[Mark Freeman II](https://www.linkedin.com/in/mafreeman2/)
+
+If you have questions or encounter issues, feel free to:
+- Open a GitHub issue
+- Contact directly via LinkedIn
+- COMING SOON: Join our [Discord community](https://discord.gg/your-invite-link)
+
+🚀 Happy data wrangling!
+</file>
+
+<file path="docker-compose.yml">
+services:
+
+  pythonbase:
+    build:
+      context: ./pythonbase
+    container_name: pythonbase
+    image: pythonbase
+    depends_on:
+      linuxbase:
+        condition: service_completed_successfully
+    ports:
+      - "4213:4213"
+      
+  jupyterbase:
+    build:
+      context: ./jupyterbase
+    container_name: jupyterbase
+    image: jupyterbase
+    depends_on:
+      pythonbase:
+        condition: service_started
+      pgduckdb:
+        condition: service_healthy
+    ports:
+      - "8888:8888"
+  
+  pipelinebase:
+    build:
+      context: ./pipelinebase
+    container_name: pipelinebase
+    image: pipelinebase
+    depends_on:
+      pythonbase:
+        condition: service_started
+      pgduckdb:
+        condition: service_healthy
+      minio:
+        condition: service_started
+
+  linuxbase:
+    build:
+      context: ./linuxbase
+    container_name: linuxbase
+    image: linuxbase
+
+  pgduckdb:
+    image: pgduckdb/pgduckdb:17-v0.1.0
+    container_name: pgduckdb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - pgduckdb_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:9.3.0
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
+      PGADMIN_DEFAULT_PASSWORD: "password"
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+      PGADMIN_PREFERENCES_JSON_FILE: "/pgadmin4/preferences.json"
+      PGADMIN_CONFIG_CONSOLE_LOG_LEVEL: 10
+    ports:
+      - "8080:80"
+    volumes:
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
+      - ./pgadmin/preferences.json:/pgadmin4/preferences.json
+      - ./pgadmin/pgpass:/pgadmin4/pgpass
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:80/misc/ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    entrypoint: >
+      sh -c "
+        echo 'Starting: pgadmin4 setup.' && \
+        chmod 600 /pgadmin4/pgpass && \
+        chmod 600 /pgadmin4/servers.json && \
+        chmod 644 /pgadmin4/preferences.json && \
+        /venv/bin/python3 /pgadmin4/setup.py load-servers /pgadmin4/servers.json && \
+        echo 'Completed: pgadmin4 setup.' && \
+        /entrypoint.sh
+      "
+
+  minio:
+    image: minio/minio:RELEASE.2025-04-22T22-12-26Z
+    container_name: minio
+    environment:
+      - MINIO_ROOT_USER=admin
+      - MINIO_ROOT_PASSWORD=password
+      - MINIO_DOMAIN=minio
+    ports:
+      - 9001:9001
+      - 9000:9000
+    command: ["server", "/data", "--console-address", ":9001"]
+
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:25.0.3
+    container_name: cloudbeaver
+    ports:
+      - "8978:8978"
+    volumes:
+      - cloudbeaver-data:/opt/cloudbeaver/workspace
+      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
+      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
+    depends_on:
+      - pgduckdb
+
+volumes:
+  pgduckdb_data:
+   driver: local
+  data:
+   driver: local
+  cloudbeaver-data:
+    driver: local
+</file>
+
+<file path="Makefile">
+# Set up the project with Docker Compose
+setup:
+	@docker compose build linuxbase
+	@docker compose build pythonbase
+	@docker compose build pipelinebase
+	@docker compose build
+	@docker compose up -d
+
+# Rebuild and start the containers (force rebuild)
+rebuild:
+	@docker compose build --no-cache
+	@docker compose up -d
+
+# Completely clean up Docker environment and rebuild containers from scratch
+rebuild-clean:
+	@docker compose down -v --remove-orphans --rmi all
+	@docker compose build --no-cache linuxbase
+	@docker compose build --no-cache pythonbase
+	@docker compose build --no-cache pipelinebase
+	@docker compose build
+	@docker compose up -d
+
+# Stop the containers gracefully
+stop:
+	@docker compose down
+
+# Execute a shell inside the pythonbase container
+exec-pythonbase:
+	@docker compose exec pythonbase bash
+
+# Execute a shell inside the pipelinebase container
+exec-pipelinebase:
+	@docker compose exec pipelinebase bash
+
+# Execute a PostgreSQL shell
+exec-postgres:
+	@docker compose exec pgduckdb psql -U postgres -d postgres
+
+# Execute DuckDB shell with persistent DB file
+exec-duckdb:
+	@docker compose exec pythonbase /usr/local/bin/duckdb /apps/sonnet.duckdb
+
+# Execute a DuckDB shell
+exec-duckdb-shell:
+	@docker compose exec pythonbase /usr/local/bin/duckdb
+
+# Start CloudBeaver and open the UI
+exec-cloudbeaver:
+	@echo "Starting CloudBeaver..."
+	docker compose up -d cloudbeaver
+	@echo "CloudBeaver is running at: http://localhost:8978 (admin/admin)"
+
+ifeq ($(shell uname),Darwin)
+	open "http://localhost:8978"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://localhost:8978"
+else
+	xdg-open "http://localhost:8978"
+endif
+
+# Execute a shell inside the linuxbase container
+exec-linuxbase:
+	@docker compose exec linuxbase bash
+
+# Load data into PostgreSQL
+load-db:
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -m ingest_claims.load_claims_to_db
+
+# Verify data in PostgreSQL
+verify-db:
+	@docker compose exec pgduckdb psql -U postgres -d postgres -c "SELECT COUNT(*) FROM raw_claims;"
+
+# Check the running containers
+status:
+	@docker compose ps
+
+# Show logs of all containers or a specific one
+logs:
+	@docker compose logs -f $(c)
+
+# Clean up containers, volumes, and images
+clean:
+	@docker compose down -v --rmi all --remove-orphans
+
+# Backup the PostgreSQL database
+backup-db:
+	@docker compose exec pgduckdb pg_dump -U postgres -d postgres > backup.sql
+
+# Restore the PostgreSQL database from a backup file
+restore-db:
+	@cat backup.sql | docker compose exec -T pgduckdb psql -U postgres -d postgres
+
+# Run all tests inside the container
+test:
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest -v /apps/tests
+
+# Run only unit tests
+test-unit:
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest /apps/tests/unit
+
+# Run only integration tests
+test-integration:
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/pytest /apps/tests/integration
+
+# Execute a pgAdmin GUI in localhost based on operating system
+exec-pgadmin:
+	@if [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='public';" | tr -d '[:space:]')" = "0" ] || \
+	    [ "$$(docker compose exec pgduckdb psql -U postgres -d postgres -tAc "SELECT SUM(reltuples)::int FROM pg_class WHERE relnamespace='public'::regnamespace AND relkind='r';" | tr -d '[:space:]')" = "0" ]; then \
+		echo "No data tables or tables are empty. Loading data..."; \
+		make load-db; \
+	else \
+		echo "Data already exists in PostgreSQL."; \
+	fi
+ifeq ($(shell uname),Darwin)
+	open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+else
+	xdg-open "http://pgadmin4%40pgadmin.org:password@localhost:8080"
+endif
+
+# Open Jupyter Lab GUI in localhost based on operating system
+exec-jupyter:
+ifeq ($(shell uname),Darwin)
+	open "http://localhost:8888"
+else ifeq ($(OS),Windows_NT)
+	powershell Start-Process "http://localhost:8888"
+else
+	xdg-open "http://localhost:8888"
+endif
+
+# Replicate data from PostrgreSQL to MinIO
+load-db-postgres-to-minio:
+	@echo "Exporting PostgreSQL → CSV (limited sample)..."
+	docker compose exec pgduckdb psql -U postgres -d postgres \
+	  -c "\COPY (SELECT * FROM raw_claims LIMIT 100000) TO '/tmp/raw_claims.csv' CSV HEADER"
+
+	@echo "Transferring CSV to Pipelinebase container..."
+	docker compose cp pgduckdb:/tmp/raw_claims.csv ./raw_claims.csv
+	docker compose cp ./raw_claims.csv pipelinebase:/apps/raw_claims.csv >/dev/null 2>&1
+
+	@echo "Running DuckDB pipeline CSV → MinIO..."
+	docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -m etl_pipelines.duckdb_to_minio
+
+	@echo "Cleaning up temporary CSV files..."
+	rm ./raw_claims.csv
+	docker compose exec pipelinebase rm /apps/raw_claims.csv
+
+	@echo "PostgreSQL → CSV → DuckDB → MinIO pipeline completed."
+
+# Check status of minio database
+check-minio:
+	docker compose exec minio mc alias set local http://localhost:9000 admin password
+	docker compose exec minio mc admin info local
+	docker compose exec minio mc ls local
+	docker compose exec minio sh -c '\
+	for bucket in $$(mc ls local | tr -s " " | cut -d" " -f5); do \
+		echo "\nBucket: $$bucket"; \
+		mc ls local/$$bucket; \
+	done'
+
+# Import data from MinIO into DuckDB
+load-db-minio-to-duckdb:
+	@echo "Running MinIO → DuckDB pipeline..."
+	@docker compose exec -e PYTHONPATH=/apps pipelinebase /venv/bin/python -c \
+		"from etl_pipelines.minio_to_duckdb import import_minio_to_duckdb, setup_duckdb_minio_connection; \
+		con = setup_duckdb_minio_connection(); \
+		import_minio_to_duckdb(con, 'postgres-data', 'raw_claims.parquet', 'raw_claims'); \
+		con.close()"
+	@echo "MinIO → DuckDB pipeline completed successfully."
+
+# Verify data imported into DuckDB
+check-duckdb:
+	@docker compose exec pipelinebase /usr/local/bin/duckdb /apps/my_database.duckdb \
+		-c "SELECT COUNT(*) AS row_count FROM raw_claims;"
+
+# Build entire data platform, load data, and run all pipelines
+run-all-data-pipelines: \
+	load-db \
+	verify-db \
+	load-db-postgres-to-minio \
+	check-minio \
+	load-db-minio-to-duckdb \
+	check-duckdb
+</file>
+
+</files>

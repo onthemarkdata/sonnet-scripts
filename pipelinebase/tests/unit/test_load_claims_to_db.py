@@ -25,7 +25,7 @@ def test_download_file_success(mocker, tmp_path):
     mock_response.status_code = 200
     mock_response.iter_content = lambda chunk_size: [b"data"]
 
-    mocker.patch("requests.get", return_value=mock_response)
+    mocker.patch("ingest_claims.load_claims_to_db.requests.get", return_value=mock_response)
 
     test_file = tmp_path / "test_download.zip"
     download_file("http://example.com/file.zip", test_file)
@@ -37,7 +37,7 @@ def test_download_file_failure(mocker):
     """Test download failure handling."""
     mock_response = MagicMock()
     mock_response.status_code = 404
-    mocker.patch("requests.get", return_value=mock_response)
+    mocker.patch("ingest_claims.load_claims_to_db.requests.get", return_value=mock_response)
 
     with pytest.raises(Exception, match="Failed to download the file"):
         download_file("http://example.com/file.zip", "claims.zip")
@@ -50,7 +50,7 @@ def test_extract_zip_file(mocker, tmp_path):
     mock_zip.__enter__.return_value.namelist.return_value = ["test.csv"]
     mock_zip.__enter__.return_value.extractall = MagicMock()  # ✅ Add this!
 
-    mocker.patch("zipfile.ZipFile", return_value=mock_zip)
+    mocker.patch("ingest_claims.load_claims_to_db.zipfile.ZipFile", return_value=mock_zip)
 
     extracted_files = extract_zip_file("claims.zip", tmp_path)
 

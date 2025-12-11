@@ -1,1 +1,0 @@
-from ingest_claims.db_utils import connect_to_db
