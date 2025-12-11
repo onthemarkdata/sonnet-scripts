@@ -1,0 +1,78 @@
+version: 2
+
+models:
+  - name: stg_claims
+    description: >
+      Staging layer for raw Medicare claims data.
+      Queries PostgreSQL directly using DuckDB's postgres_scanner extension.
+      Performs basic type casting and column renaming.
+    columns:
+      - name: patient_id
+        description: "De-identified patient identifier (DESYNPUF_ID)"
+        data_tests:
+          - not_null
+
+      - name: claim_id
+        description: "Unique claim identifier"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: claim_from_date
+        description: "Claim service start date"
+
+      - name: claim_thru_date
+        description: "Claim service end date"
+
+      - name: diagnosis_code_1
+        description: "Primary ICD-9 diagnosis code"
+
+      - name: provider_npi_1
+        description: "Primary provider NPI"
+
+      - name: procedure_code_1
+        description: "Primary HCPCS procedure code"
+
+      - name: payment_amount_1
+        description: "First line item payment amount"
+        data_tests:
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 1000000
+              row_condition: "payment_amount_1 is not null"
+
+  - name: fct_claims_summary
+    description: >
+      Patient-level claims summary mart.
+      Aggregates claims data to provide key metrics per patient.
+    columns:
+      - name: patient_id
+        description: "De-identified patient identifier"
+        data_tests:
+          - not_null
+          - unique
+
+      - name: total_claims
+        description: "Total number of claims for the patient"
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 1
+              max_value: 100000
+
+      - name: first_claim_date
+        description: "Date of patient's first claim"
+
+      - name: last_claim_date
+        description: "Date of patient's most recent claim"
+
+      - name: total_payment_amount
+        description: "Total payment amount across all claims"
+        data_tests:
+          - not_null
+          - dbt_expectations.expect_column_values_to_be_between:
+              min_value: 0
+              max_value: 10000000
+
+      - name: avg_payment_per_claim
+        description: "Average payment per claim"

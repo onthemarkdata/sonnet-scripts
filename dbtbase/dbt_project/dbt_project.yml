@@ -1,0 +1,34 @@
+name: 'sonnet_claims'
+version: '1.0.0'
+config-version: 2
+
+profile: 'sonnet_claims'
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "logs"
+
+models:
+  sonnet_claims:
+    staging:
+      +materialized: view
+      +schema: staging
+    marts:
+      +materialized: table
+      +schema: marts
+
+vars:
+  # PostgreSQL connection string for postgres_scanner
+  pg_connection_string: "postgresql://postgres:postgres@pgduckdb:5432/postgres"
+  # Date filters for claims data
+  start_date: '2008-01-01'
+  end_date: '2010-12-31'

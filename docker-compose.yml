@@ -37,6 +37,25 @@ services:
       minio:
         condition: service_started
 
+  dbtbase:
+    build:
+      context: ./dbtbase
+    container_name: dbtbase
+    image: dbtbase
+    depends_on:
+      pythonbase:
+        condition: service_started
+      pgduckdb:
+        condition: service_healthy
+    environment:
+      - DB_HOST=pgduckdb
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - DBT_TARGET=dev
+    volumes:
+      - dbt_data:/apps/data
+
   linuxbase:
     build:
       context: ./linuxbase
@@ -120,4 +139,6 @@ volumes:
   data:
    driver: local
   cloudbeaver-data:
+    driver: local
+  dbt_data:
     driver: local
