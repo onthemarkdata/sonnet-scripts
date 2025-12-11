@@ -1,34 +1,5 @@
-from io import StringIO
-import os
-
-import psycopg2
-
-
-def connect_to_db():
-    try:
-        # Use environment variables for configuration
-        connection = psycopg2.connect(
-            dbname=os.getenv("DB_NAME", "postgres"),
-            user=os.getenv("DB_USER", "postgres"),
-            password=os.getenv("DB_PASSWORD", "postgres"),
-            host=os.getenv("DB_HOST", "pgduckdb"),  # Use "db" as the hostname
-            port=os.getenv("DB_PORT", 5432),
-        )
-        return connection
-    except Exception as e:
-        print(f"The error '{e}' occurred.")
-        return None
-
-
-def copy_csv_to_db(conn, csv_file, table_name):
-    with conn.cursor() as cur:
-        with open(csv_file, "r") as file:
-            cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", file)
-        conn.commit()
-        print(f"Copied data from {csv_file} into the {table_name} table.")
-
-
 def create_claims_table(cur):
+    """Create the raw_claims table if it doesn't exist."""
     ddl_statement = """
         CREATE TABLE IF NOT EXISTS raw_claims (
             DESYNPUF_ID TEXT,

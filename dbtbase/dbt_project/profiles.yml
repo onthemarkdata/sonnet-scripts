@@ -1,0 +1,17 @@
+sonnet_claims:
+  target: "{{ env_var('DBT_TARGET', 'dev') }}"
+
+  outputs:
+    dev:
+      type: duckdb
+      path: /apps/dbt.duckdb
+      threads: 4
+      extensions:
+        - postgres_scanner
+
+    prod:
+      type: duckdb
+      path: /apps/dbt_prod.duckdb
+      threads: 4
+      extensions:
+        - postgres_scanner

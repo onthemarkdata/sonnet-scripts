@@ -1,0 +1,88 @@
+# {{ project_name }}
+
+This project was created with [sonnet-scripts](https://github.com/onthemarkdata/sonnet-scripts).
+
+## Quick Start
+
+Start all services:
+```bash
+sonnet up
+```
+
+Stop all services:
+```bash
+sonnet down
+```
+
+Check status:
+```bash
+sonnet status
+```
+
+## Services Included
+
+{% for service_name in services %}
+{% set svc = service_registry[service_name] %}
+### {{ service_name }}
+- **Description**: {{ svc.description }}
+{% if svc.ports %}
+{% for host_port, container_port in svc.ports.items() %}
+- **Port**: {{ host_port }}
+{% endfor %}
+{% endif %}
+{% if svc.connection_string %}
+- **Connection**: `{{ svc.connection_string }}`
+{% endif %}
+{% if svc.url_template %}
+- **URL**: {{ svc.url_template }}
+{% endif %}
+{% if service_name == 'pgadmin' %}
+- **Login**: pgadmin4@pgadmin.org / password
+{% endif %}
+{% if service_name == 'minio' %}
+- **Login**: admin / password
+{% endif %}
+
+{% endfor %}
+
+## Loading Sample Data
+
+{% if 'pipelinebase' in services %}
+Load CMS Medicare sample data:
+```bash
+docker compose exec pipelinebase /venv/bin/python -m ingest_claims.load_claims_to_db
+```
+{% else %}
+To load sample data, add `pipelinebase` to your stack and run:
+```bash
+docker compose exec pipelinebase /venv/bin/python -m ingest_claims.load_claims_to_db
+```
+{% endif %}
+
+{% if 'dbtbase' in services %}
+## Running dbt Transformations
+
+```bash
+# Install dbt packages
+docker compose exec dbtbase /venv/bin/dbt deps --project-dir /apps/dbt_project
+
+# Run dbt models
+docker compose exec dbtbase /venv/bin/dbt run --project-dir /apps/dbt_project
+
+# Run dbt tests
+docker compose exec dbtbase /venv/bin/dbt test --project-dir /apps/dbt_project
+```
+{% endif %}
+
+## Useful Commands
+
+```bash
+# Access PostgreSQL shell
+docker compose exec pgduckdb psql -U postgres -d postgres
+
+# View logs
+docker compose logs -f
+
+# Rebuild containers
+docker compose up -d --build
+```

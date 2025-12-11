@@ -1,8 +1,8 @@
 import pytest
-import psycopg2
 import os
+
 from ingest_claims.load_claims_to_db import main
-from ingest_claims.db_utils import connect_to_db
+from db.postgres import connect_to_db
 
 
 @pytest.fixture(scope="module")

@@ -1,0 +1,28 @@
+-- Seed SQL for {{ project_name }}
+-- This file can be used to initialize your database with sample structures
+
+-- Create schemas for organizing your data
+CREATE SCHEMA IF NOT EXISTS staging;
+CREATE SCHEMA IF NOT EXISTS marts;
+
+-- Example: Create a simple sample table
+CREATE TABLE IF NOT EXISTS staging.sample_data (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255),
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data
+INSERT INTO staging.sample_data (name, description) VALUES
+    ('Sample Record 1', 'This is the first sample record'),
+    ('Sample Record 2', 'This is the second sample record'),
+    ('Sample Record 3', 'This is the third sample record');
+
+-- Create a sample view
+CREATE OR REPLACE VIEW marts.sample_summary AS
+SELECT
+    COUNT(*) as total_records,
+    MIN(created_at) as first_created,
+    MAX(created_at) as last_created
+FROM staging.sample_data;

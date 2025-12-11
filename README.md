@@ -166,10 +166,59 @@ For a specific container: `make logs c=container_name`
 │── 📂 pipelinebase/       # ETL pipeline and data ingest container
 │── 📂 linuxbase/          # Base container for Linux dependencies
 │── 📂 jupyterbase/        # Jupyter container for analytics and data science
+│── 📂 cli/                # Sonnet CLI tool
 │── 🐳 docker-compose.yml  # Container orchestration
 │── 🛠 Makefile            # Automation commands
 │── 📜 README.md           # You are here!
 ```
+
+## **🎹 Sonnet CLI**
+
+The Sonnet CLI lets you scaffold and run your own local Modern Data Stack projects anywhere on your machine. Zero to running SQL in under 5 minutes.
+
+### **Install the CLI**
+```sh
+make install-cli
+```
+
+### **Create a New Project**
+```sh
+# Create a project with default services (pgduckdb + pgadmin)
+sonnet init myproject
+
+# Or interactively select which services to include
+sonnet init myproject --interactive
+```
+
+### **Manage Your Stack**
+```sh
+cd myproject
+
+# Start all services
+sonnet up
+
+# Check status
+sonnet status
+
+# Stop all services
+sonnet down
+```
+
+### **Available Services**
+| Service | Description | Port |
+|---------|-------------|------|
+| pgduckdb | PostgreSQL with DuckDB extension | 5432 |
+| pgadmin | pgAdmin 4 web interface | 8080 |
+| cloudbeaver | CloudBeaver web interface | 8978 |
+| minio | S3-compatible object storage | 9000, 9001 |
+| jupyterbase | Jupyter Lab for Python/SQL | 8888 |
+| pipelinebase | ETL pipelines and data loading | - |
+| dbtbase | dbt Core for transformations | - |
+
+### **Connection Info**
+After running `sonnet up`, access your stack:
+- **Database**: `postgresql://postgres:postgres@localhost:5432/postgres`
+- **pgAdmin**: http://localhost:8080 (pgadmin4@pgadmin.org / password)
 
 ## **🛠 CI/CD Pipeline**
 Github Actions automates builds, test, and environment validation. The pipeline:
