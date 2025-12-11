@@ -22,6 +22,7 @@ dependencies = [
     "typer>=0.9.0",
     "rich>=13.0.0",
     "jinja2>=3.1.0",
+    "pyyaml>=6.0.0",
 ]
 
 [project.optional-dependencies]
@@ -30,7 +31,6 @@ dev = [
     "pytest-cov>=4.0.0",
     "mypy>=1.0.0",
     "ruff>=0.1.0",
-    "pyyaml>=6.0.0",
 ]
 
 [project.scripts]
