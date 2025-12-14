@@ -1,0 +1,14 @@
+{
+	"name": "Sonnet Scripts Dev Container",
+	"dockerComposeFile": "docker-compose.yml",
+	"workspaceFolder": "/workspaces/Sonnet-Scripts",
+	"extensions": [
+		"ms-python.python"
+	],
+	"remoteUser": "sonnet-scripts",
+	"postCreateCommand": [
+		"make setup",
+        "make install-cli",
+		"echo 'Sonnet Scripts dev container setup complete!'"
+    ]
+}
