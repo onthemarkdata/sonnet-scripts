@@ -7,6 +7,12 @@ setup:
 	@docker compose build
 	@docker compose up -d
 
+# Install the sonnet CLI tool
+install-cli:
+	@echo "Installing sonnet CLI..."
+	@cd cli && uv pip install -e .
+	@echo "Done! Run 'sonnet --help' to get started."
+
 # Rebuild and start the containers (force rebuild)
 rebuild:
 	@docker compose build --no-cache
