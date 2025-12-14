@@ -3,6 +3,7 @@ setup:
 	@docker compose build linuxbase
 	@docker compose build pythonbase
 	@docker compose build pipelinebase
+	@docker compose build dbtbase
 	@docker compose build
 	@docker compose up -d
 
@@ -17,6 +18,7 @@ rebuild-clean:
 	@docker compose build --no-cache linuxbase
 	@docker compose build --no-cache pythonbase
 	@docker compose build --no-cache pipelinebase
+	@docker compose build --no-cache dbtbase
 	@docker compose build
 	@docker compose up -d
 
@@ -182,3 +184,54 @@ run-all-data-pipelines: \
 	check-minio \
 	load-db-minio-to-duckdb \
 	check-duckdb
+
+# =============================================================================
+# dbt Commands
+# =============================================================================
+
+# Execute a shell inside the dbtbase container
+exec-dbtbase:
+	@docker compose exec dbtbase bash
+
+# Run dbt debug to test connection
+dbt-debug:
+	@docker compose exec dbtbase /venv/bin/dbt debug --project-dir /apps/dbt_project
+
+# Install dbt packages (dbt-utils, dbt-expectations)
+dbt-deps:
+	@docker compose exec dbtbase /venv/bin/dbt deps --project-dir /apps/dbt_project
+
+# Run dbt models
+dbt-run:
+	@docker compose exec dbtbase /venv/bin/dbt run --project-dir /apps/dbt_project
+
+# Run dbt tests
+dbt-test:
+	@docker compose exec dbtbase /venv/bin/dbt test --project-dir /apps/dbt_project
+
+# Run dbt with full refresh (rebuild tables)
+dbt-run-full-refresh:
+	@docker compose exec dbtbase /venv/bin/dbt run --full-refresh --project-dir /apps/dbt_project
+
+# Run complete dbt workflow (deps + run + test)
+dbt-build:
+	@docker compose exec dbtbase /venv/bin/dbt deps --project-dir /apps/dbt_project
+	@docker compose exec dbtbase /venv/bin/dbt run --project-dir /apps/dbt_project
+	@docker compose exec dbtbase /venv/bin/dbt test --project-dir /apps/dbt_project
+
+# Run specific dbt model (usage: make dbt-run-model model=stg_claims)
+dbt-run-model:
+	@docker compose exec dbtbase /venv/bin/dbt run --select $(model) --project-dir /apps/dbt_project
+
+# Compile dbt without running
+dbt-compile:
+	@docker compose exec dbtbase /venv/bin/dbt compile --project-dir /apps/dbt_project
+
+# Generate dbt documentation
+dbt-docs-generate:
+	@docker compose exec dbtbase /venv/bin/dbt docs generate --project-dir /apps/dbt_project
+
+# Verify dbt transformed data in DuckDB
+verify-dbt:
+	@docker compose exec dbtbase /usr/local/bin/duckdb /apps/dbt.duckdb \
+		-c "SELECT 'staging.stg_claims' as model, COUNT(*) as row_count FROM staging.stg_claims UNION ALL SELECT 'marts.fct_claims_summary', COUNT(*) FROM marts.fct_claims_summary;"

@@ -59,15 +59,20 @@ pgadmin/
   preferences.json
   servers.json
 pipelinebase/
+  db/
+    __init__.py
+    duckdb.py
+    minio.py
+    postgres.py
+    validation.py
   etl_pipelines/
     __init__.py
-    db_utils.py
     duckdb_to_minio.py
     minio_to_duckdb.py
   ingest_claims/
     __init__.py
-    db_utils.py
     load_claims_to_db.py
+    schema.py
   tests/
     integration/
       __init__.py
@@ -79,7 +84,9 @@ pipelinebase/
     __init__.py
     conftest.py
   __init__.py
+  config.py
   Dockerfile
+  logging_config.py
   requirements.txt
 pythonbase/
   Dockerfile
@@ -100,18 +107,6 @@ README.md
 
 <files>
 This section contains the contents of the repository's files.
-
-<file path="jupyterbase/jupyter_notebook_config.py">
-c = get_config()
-
-c.NotebookApp.ip = '0.0.0.0'
-c.NotebookApp.open_browser = False
-c.NotebookApp.port = 8888
-c.NotebookApp.allow_root = True
-
-# Password is literally "password"
-c.NotebookApp.password = 'argon2:$argon2id$v=19$m=10240,t=10,p=8$gZ5o1JVUiXnSk7US+dIoeg$ogbFypNBBRxLPkr+Z36Q+w'
-</file>
 
 <file path="jupyterbase/pgduckdb_connect.ipynb">
 {
@@ -275,116 +270,169 @@ pgduckdb:5432:postgres:postgres:postgres
 }
 </file>
 
-<file path="pipelinebase/etl_pipelines/db_utils.py">
+<file path="pipelinebase/db/__init__.py">
+from db.postgres import connect_to_db, copy_csv_to_db
+from db.duckdb import setup_duckdb_minio_connection
+from db.minio import get_minio_client, create_bucket_if_not_exists
+from db.validation import validate_identifier, validate_s3_path
+
+__all__ = [
+    "connect_to_db",
+    "copy_csv_to_db",
+    "setup_duckdb_minio_connection",
+    "get_minio_client",
+    "create_bucket_if_not_exists",
+    "validate_identifier",
+    "validate_s3_path",
+]
+</file>
+
+<file path="pipelinebase/db/duckdb.py">
 import duckdb
-from minio import Minio
+
+import config
+from logging_config import setup_logging
+
+logger = setup_logging(__name__)
+
 
 def setup_duckdb_minio_connection():
     """Configure DuckDB connection to MinIO and use persistent database."""
-    con = duckdb.connect('/apps/my_database.duckdb')  # <-- Explicit persistent database file
+    con = duckdb.connect(config.DUCKDB_PATH)
     con.execute("INSTALL httpfs;")
     con.execute("LOAD httpfs;")
-    con.execute("""
-        SET s3_endpoint='minio:9000';
-        SET s3_access_key_id='admin';
-        SET s3_secret_access_key='password';
-        SET s3_use_ssl=false;
+    con.execute(f"""
+        SET s3_endpoint='{config.MINIO_ENDPOINT}';
+        SET s3_access_key_id='{config.MINIO_ACCESS_KEY}';
+        SET s3_secret_access_key='{config.MINIO_SECRET_KEY}';
+        SET s3_use_ssl={'true' if config.MINIO_USE_SSL else 'false'};
         SET s3_url_style='path';
     """)
+    logger.debug("DuckDB MinIO connection established")
     return con
 </file>
 
-<file path="pipelinebase/etl_pipelines/duckdb_to_minio.py">
-from .db_utils import setup_duckdb_minio_connection
+<file path="pipelinebase/db/minio.py">
 from minio import Minio
 
-def create_bucket_if_not_exists(bucket_name):
-    client = Minio(
-        endpoint="minio:9000",
-        access_key="admin",
-        secret_key="password",
-        secure=False,
+import config
+from logging_config import setup_logging
+
+logger = setup_logging(__name__)
+
+
+def get_minio_client():
+    """Get a configured MinIO client instance."""
+    return Minio(
+        endpoint=config.MINIO_ENDPOINT,
+        access_key=config.MINIO_ACCESS_KEY,
+        secret_key=config.MINIO_SECRET_KEY,
+        secure=config.MINIO_USE_SSL,
     )
 
+
+def create_bucket_if_not_exists(bucket_name):
+    """Create a MinIO bucket if it doesn't already exist."""
+    client = get_minio_client()
     if not client.bucket_exists(bucket_name):
         client.make_bucket(bucket_name)
-
-def export_csv_to_minio(con):
-    bucket_name = 'postgres-data'
-    create_bucket_if_not_exists(bucket_name)
-
-    con.execute(f"""
-        COPY (
-            SELECT * FROM read_csv_auto('/apps/raw_claims.csv')
-        ) TO 's3://{bucket_name}/raw_claims.parquet' (FORMAT PARQUET);
-    """)
-    print("CSV successfully converted and uploaded to MinIO.")
-
-def main():
-    con = setup_duckdb_minio_connection()
-    export_csv_to_minio(con)
-    con.close()
-
-if __name__ == "__main__":
-    main()
+        logger.info(f"Created bucket: {bucket_name}")
+    else:
+        logger.debug(f"Bucket already exists: {bucket_name}")
 </file>
 
-<file path="pipelinebase/etl_pipelines/minio_to_duckdb.py">
-from .db_utils import setup_duckdb_minio_connection
-
-def import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table):
-    minio_url = f"s3://{bucket_name}/{parquet_file}"
-    con.execute(f"""
-        CREATE TABLE IF NOT EXISTS {duckdb_table} AS
-        SELECT * FROM read_parquet('{minio_url}');
-    """)
-    print(f"Successfully imported '{minio_url}' into DuckDB table '{duckdb_table}'.")
-
-def main():
-    con = setup_duckdb_minio_connection()
-    bucket_name = 'postgres-data'
-    parquet_file = 'raw_claims.parquet'
-    duckdb_table = 'raw_claims'
-    
-    import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table)
-    con.close()
-
-if __name__ == "__main__":
-    main()
-</file>
-
-<file path="pipelinebase/ingest_claims/db_utils.py">
-from io import StringIO
-import os
-
+<file path="pipelinebase/db/postgres.py">
 import psycopg2
+
+import config
+from db.validation import validate_identifier
+from logging_config import setup_logging
+
+logger = setup_logging(__name__)
 
 
 def connect_to_db():
+    """Connect to PostgreSQL database using configuration settings."""
     try:
-        # Use environment variables for configuration
         connection = psycopg2.connect(
-            dbname=os.getenv("DB_NAME", "postgres"),
-            user=os.getenv("DB_USER", "postgres"),
-            password=os.getenv("DB_PASSWORD", "postgres"),
-            host=os.getenv("DB_HOST", "pgduckdb"),  # Use "db" as the hostname
-            port=os.getenv("DB_PORT", 5432),
+            dbname=config.DB_NAME,
+            user=config.DB_USER,
+            password=config.DB_PASSWORD,
+            host=config.DB_HOST,
+            port=config.DB_PORT,
         )
         return connection
     except Exception as e:
-        print(f"The error '{e}' occurred.")
+        logger.error(f"Database connection error: {e}")
         return None
 
 
 def copy_csv_to_db(conn, csv_file, table_name):
+    """Copy CSV file data into a PostgreSQL table."""
+    validate_identifier(table_name, "table name")
+
     with conn.cursor() as cur:
         with open(csv_file, "r") as file:
             cur.copy_expert(f"COPY {table_name} FROM STDIN WITH CSV HEADER", file)
         conn.commit()
-        print(f"Copied data from {csv_file} into the {table_name} table.")
+        logger.info(f"Copied data from {csv_file} into the {table_name} table.")
+</file>
+
+<file path="pipelinebase/db/validation.py">
+import re
 
 
+def validate_identifier(name, identifier_type="identifier"):
+    """
+    Validate that a SQL identifier (table name, column name, etc.) is safe.
+
+    Only allows alphanumeric characters and underscores.
+    Raises ValueError if the identifier is invalid.
+    """
+    if not name:
+        raise ValueError(f"{identifier_type} cannot be empty")
+
+    if not re.match(r'^[a-zA-Z_][a-zA-Z0-9_]*$', name):
+        raise ValueError(
+            f"Invalid {identifier_type}: '{name}'. "
+            "Only alphanumeric characters and underscores are allowed, "
+            "and it must start with a letter or underscore."
+        )
+
+    return name
+
+
+def validate_s3_path(bucket_name, file_path):
+    """
+    Validate S3/MinIO bucket name and file path.
+
+    Bucket names: lowercase alphanumeric, hyphens, 3-63 chars
+    File paths: alphanumeric, underscores, hyphens, forward slashes, dots
+    """
+    if not bucket_name:
+        raise ValueError("Bucket name cannot be empty")
+
+    if not re.match(r'^[a-z0-9][a-z0-9\-]{1,61}[a-z0-9]$', bucket_name):
+        raise ValueError(
+            f"Invalid bucket name: '{bucket_name}'. "
+            "Must be 3-63 characters, lowercase alphanumeric and hyphens only."
+        )
+
+    if not file_path:
+        raise ValueError("File path cannot be empty")
+
+    if not re.match(r'^[a-zA-Z0-9_\-./]+$', file_path):
+        raise ValueError(
+            f"Invalid file path: '{file_path}'. "
+            "Only alphanumeric characters, underscores, hyphens, dots, and forward slashes are allowed."
+        )
+
+    return bucket_name, file_path
+</file>
+
+<file path="pipelinebase/ingest_claims/schema.py">
 def create_claims_table(cur):
+    """Create the raw_claims table if it doesn't exist."""
     ddl_statement = """
         CREATE TABLE IF NOT EXISTS raw_claims (
             DESYNPUF_ID TEXT,
@@ -534,82 +582,248 @@ def create_claims_table(cur):
     cur.execute(ddl_statement)
 </file>
 
+<file path="pipelinebase/config.py">
+import os
+
+
+# PostgreSQL Configuration
+DB_NAME = os.getenv("DB_NAME", "postgres")
+DB_USER = os.getenv("DB_USER", "postgres")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "postgres")
+DB_HOST = os.getenv("DB_HOST", "pgduckdb")
+DB_PORT = os.getenv("DB_PORT", 5432)
+
+# MinIO Configuration
+MINIO_ENDPOINT = os.getenv("MINIO_ENDPOINT", "minio:9000")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY", "admin")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY", "password")
+MINIO_USE_SSL = os.getenv("MINIO_USE_SSL", "false").lower() == "true"
+MINIO_DEFAULT_BUCKET = os.getenv("MINIO_DEFAULT_BUCKET", "postgres-data")
+
+# DuckDB Configuration
+DUCKDB_PATH = os.getenv("DUCKDB_PATH", "/apps/my_database.duckdb")
+
+# Claims Data Configuration
+CLAIMS_URL = os.getenv(
+    "CLAIMS_URL",
+    "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip",
+)
+CLAIMS_ZIP_FILE = os.getenv("CLAIMS_ZIP_FILE", "claims.zip")
+CLAIMS_CSV_FILE = os.getenv("CLAIMS_CSV_FILE", "claims.csv")
+CLAIMS_ORIGINAL_CSV = os.getenv(
+    "CLAIMS_ORIGINAL_CSV", "DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.csv"
+)
+</file>
+
+<file path="pipelinebase/logging_config.py">
+import logging
+import os
+import sys
+
+
+def setup_logging(name=None, level=None):
+    """
+    Configure and return a logger instance.
+
+    Args:
+        name: Logger name (defaults to root logger if None)
+        level: Log level (defaults to INFO, can be overridden by LOG_LEVEL env var)
+
+    Returns:
+        Configured logger instance
+    """
+    if level is None:
+        level_name = os.getenv("LOG_LEVEL", "INFO").upper()
+        level = getattr(logging, level_name, logging.INFO)
+
+    logger = logging.getLogger(name)
+
+    if not logger.handlers:
+        handler = logging.StreamHandler(sys.stdout)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S"
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+
+    logger.setLevel(level)
+    return logger
+</file>
+
+<file path="pipelinebase/requirements.txt">
+duckdb==1.2.2
+minio==7.2.15
+pandas==2.2.3
+psycopg2-binary==2.9.10
+pytest==8.3.5
+pytest-mock==3.14.0
+requests==2.32.3
+ruff==0.11.9
+</file>
+
+<file path="sonnets/healthcare/medicare-claims-synthetic-public-use-files/README.md">
+# Medicare Claims Synthetic Public Use Files (SynPUFs)
+Source: https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files
+</file>
+
+<file path="sonnets/README.md">
+
+</file>
+
+<file path="pytest.ini">
+[pytest]
+pythonpath = pythonbase
+</file>
+
+<file path="jupyterbase/jupyter_notebook_config.py">
+c = get_config()
+
+# ServerApp settings for JupyterLab 4.x
+c.ServerApp.ip = '0.0.0.0'
+c.ServerApp.open_browser = False
+c.ServerApp.port = 8888
+c.ServerApp.allow_root = True
+
+# Password is literally "password"
+c.ServerApp.password = 'argon2:$argon2id$v=19$m=10240,t=10,p=8$gZ5o1JVUiXnSk7US+dIoeg$ogbFypNBBRxLPkr+Z36Q+w'
+</file>
+
+<file path="pipelinebase/etl_pipelines/duckdb_to_minio.py">
+import config
+from db.duckdb import setup_duckdb_minio_connection
+from db.minio import create_bucket_if_not_exists
+from logging_config import setup_logging
+
+logger = setup_logging(__name__)
+
+
+def export_csv_to_minio(con):
+    """Export CSV data to MinIO as Parquet using DuckDB."""
+    bucket_name = config.MINIO_DEFAULT_BUCKET
+    create_bucket_if_not_exists(bucket_name)
+
+    con.execute(f"""
+        COPY (
+            SELECT * FROM read_csv_auto('/apps/raw_claims.csv')
+        ) TO 's3://{bucket_name}/raw_claims.parquet' (FORMAT PARQUET);
+    """)
+    logger.info("CSV successfully converted and uploaded to MinIO.")
+
+
+def main():
+    con = setup_duckdb_minio_connection()
+    export_csv_to_minio(con)
+    con.close()
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
+<file path="pipelinebase/etl_pipelines/minio_to_duckdb.py">
+import config
+from db.duckdb import setup_duckdb_minio_connection
+from db.validation import validate_identifier, validate_s3_path
+from logging_config import setup_logging
+
+logger = setup_logging(__name__)
+
+
+def import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table):
+    """Import Parquet data from MinIO into a DuckDB table."""
+    validate_s3_path(bucket_name, parquet_file)
+    validate_identifier(duckdb_table, "table name")
+
+    minio_url = f"s3://{bucket_name}/{parquet_file}"
+    con.execute(f"""
+        CREATE TABLE IF NOT EXISTS {duckdb_table} AS
+        SELECT * FROM read_parquet('{minio_url}');
+    """)
+    logger.info(f"Successfully imported '{minio_url}' into DuckDB table '{duckdb_table}'.")
+
+
+def main():
+    con = setup_duckdb_minio_connection()
+    bucket_name = config.MINIO_DEFAULT_BUCKET
+    parquet_file = "raw_claims.parquet"
+    duckdb_table = "raw_claims"
+
+    import_minio_to_duckdb(con, bucket_name, parquet_file, duckdb_table)
+    con.close()
+
+
+if __name__ == "__main__":
+    main()
+</file>
+
 <file path="pipelinebase/ingest_claims/load_claims_to_db.py">
 import os
 import requests
 import zipfile
 
-import pandas as pd
+import config
+from db.postgres import connect_to_db, copy_csv_to_db
+from ingest_claims.schema import create_claims_table
+from logging_config import setup_logging
 
-from ingest_claims.db_utils import connect_to_db, create_claims_table, copy_csv_to_db
-
-url = "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip"
-
-zip_file_name = "claims.zip"
-csv_file_name = "claims.csv"
+logger = setup_logging(__name__)
 
 
 def download_file(url, zip_file_name):
+    """Download a file from a URL."""
     response = requests.get(url, stream=True)
     if response.status_code == 200:
         with open(zip_file_name, "wb") as file:
             for chunk in response.iter_content(chunk_size=8192):
                 file.write(chunk)
-        print(f"{zip_file_name} downloaded successfully.")
+        logger.info(f"{zip_file_name} downloaded successfully.")
     else:
         raise Exception(
             f"Failed to download the file. Status code: {response.status_code}"
         )
 
-    return
-
 
 def extract_zip_file(zip_file_name, extract_to="."):
+    """Extract a zip file to the specified directory."""
     with zipfile.ZipFile(zip_file_name, "r") as zip_ref:
         zip_ref.extractall(extract_to)
         extracted_files = zip_ref.namelist()
-        print(f"Extraced files: {zip_ref.namelist()}")
+        logger.info(f"Extracted files: {zip_ref.namelist()}")
     return extracted_files
 
 
 def rename_csv_file(original_csv_name, csv_file_name):
+    """Rename a CSV file."""
     if os.path.exists(original_csv_name):
         os.rename(original_csv_name, csv_file_name)
-        print(f"Renamed {original_csv_name} to {csv_file_name}.")
+        logger.info(f"Renamed {original_csv_name} to {csv_file_name}.")
     else:
         raise FileNotFoundError(f"{original_csv_name} not found in extracted files.")
 
 
 def cleanup_files(*files):
+    """Remove specified files."""
     for file in files:
         if os.path.exists(file):
             os.remove(file)
-            print(f"Removed {file}.")
-    return
+            logger.debug(f"Removed {file}.")
 
 
 def main():
-
-    zip_file_name = "claims.zip"
-    csv_file_name = "claims.csv"
-    original_csv_name = "DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.csv"
-    url = (
-        "http://downloads.cms.gov/files/DE1_0_2008_to_2010_Carrier_Claims_Sample_2A.zip"
-    )
-
     db = None
 
     try:
         # Download the file
-        download_file(url, zip_file_name)
+        download_file(config.CLAIMS_URL, config.CLAIMS_ZIP_FILE)
 
         # Extract Zip File
-        extract_zip_file(zip_file_name)
-        rename_csv_file(original_csv_name, csv_file_name)
-        cleanup_files(zip_file_name)
+        extract_zip_file(config.CLAIMS_ZIP_FILE)
+        rename_csv_file(config.CLAIMS_ORIGINAL_CSV, config.CLAIMS_CSV_FILE)
+        cleanup_files(config.CLAIMS_ZIP_FILE)
 
         # Connect to the Database
-        print("Connecting to the database...")
+        logger.info("Connecting to the database...")
         db = connect_to_db()
 
         with db.cursor() as cur:
@@ -617,23 +831,20 @@ def main():
             db.commit()
 
         # Copy the dataframe to the database
-        print("Copying data to the database...")
-        copy_csv_to_db(db, csv_file_name, "raw_claims")
+        logger.info("Copying data to the database...")
+        copy_csv_to_db(db, config.CLAIMS_CSV_FILE, "raw_claims")
 
-        print("Data ingestion completed successfully.")
+        logger.info("Data ingestion completed successfully.")
 
     except Exception as e:
-        print(f"An error occurred: {e}")
+        logger.error(f"An error occurred: {e}")
         if db:
             db.rollback()
     finally:
-        # Cleanup resources
-        # cleanup_files(csv_file_name)
-        # print("Removed the CSV file.")
-        print("Not removing the CSV file.")
+        logger.debug("Not removing the CSV file.")
 
         if db:
-            print("Closing the database connection.")
+            logger.info("Closing the database connection.")
             db.close()
 
 
@@ -643,10 +854,10 @@ if __name__ == "__main__":
 
 <file path="pipelinebase/tests/integration/test_pipeline.py">
 import pytest
-import psycopg2
 import os
+
 from ingest_claims.load_claims_to_db import main
-from ingest_claims.db_utils import connect_to_db
+from db.postgres import connect_to_db
 
 
 @pytest.fixture(scope="module")
@@ -675,10 +886,9 @@ import pytest
 import psycopg2
 from unittest import mock
 from unittest.mock import MagicMock
-from ingest_claims.db_utils import (
-    connect_to_db,
-    create_claims_table,
-)
+
+from db.postgres import connect_to_db
+from ingest_claims.schema import create_claims_table
 
 
 @pytest.fixture
@@ -697,7 +907,7 @@ def mock_conn(mock_cursor):
 
 def test_connect_to_db_success():
     """Test that connect_to_db successfully connects using a mock."""
-    with mock.patch("psycopg2.connect", return_value=MagicMock()) as mock_connect:
+    with mock.patch("db.postgres.psycopg2.connect", return_value=MagicMock()) as mock_connect:
         conn = connect_to_db()
         assert conn is not None
         mock_connect.assert_called_once()
@@ -705,7 +915,7 @@ def test_connect_to_db_success():
 
 def test_connect_to_db_failure():
     """Test the connect_to_db returns None if connection fails."""
-    with mock.patch("psycopg2.connect", side_effect=psycopg2.OperationalError):
+    with mock.patch("db.postgres.psycopg2.connect", side_effect=psycopg2.OperationalError):
         conn = connect_to_db()
         assert conn is None
 
@@ -747,7 +957,7 @@ def test_download_file_success(mocker, tmp_path):
     mock_response.status_code = 200
     mock_response.iter_content = lambda chunk_size: [b"data"]
 
-    mocker.patch("requests.get", return_value=mock_response)
+    mocker.patch("ingest_claims.load_claims_to_db.requests.get", return_value=mock_response)
 
     test_file = tmp_path / "test_download.zip"
     download_file("http://example.com/file.zip", test_file)
@@ -759,7 +969,7 @@ def test_download_file_failure(mocker):
     """Test download failure handling."""
     mock_response = MagicMock()
     mock_response.status_code = 404
-    mocker.patch("requests.get", return_value=mock_response)
+    mocker.patch("ingest_claims.load_claims_to_db.requests.get", return_value=mock_response)
 
     with pytest.raises(Exception, match="Failed to download the file"):
         download_file("http://example.com/file.zip", "claims.zip")
@@ -772,7 +982,7 @@ def test_extract_zip_file(mocker, tmp_path):
     mock_zip.__enter__.return_value.namelist.return_value = ["test.csv"]
     mock_zip.__enter__.return_value.extractall = MagicMock()  # ✅ Add this!
 
-    mocker.patch("zipfile.ZipFile", return_value=mock_zip)
+    mocker.patch("ingest_claims.load_claims_to_db.zipfile.ZipFile", return_value=mock_zip)
 
     extracted_files = extract_zip_file("claims.zip", tmp_path)
 
@@ -813,10 +1023,6 @@ def test_cleanup_files(tmp_path):
     assert not file2.exists()
 </file>
 
-<file path="pipelinebase/tests/__init__.py">
-from ingest_claims.db_utils import connect_to_db
-</file>
-
 <file path="pipelinebase/Dockerfile">
 FROM pythonbase:latest
 
@@ -829,6 +1035,9 @@ RUN uv venv --python 3.12.6 /venv && \
     uv --version
 
 # Copy application files
+COPY config.py /apps/config.py
+COPY logging_config.py /apps/logging_config.py
+COPY db /apps/db
 COPY etl_pipelines /apps/etl_pipelines
 COPY ingest_claims /apps/ingest_claims
 COPY tests /apps/tests
@@ -841,31 +1050,6 @@ RUN . /venv/bin/activate && \
 # Create empty __init__.py files to ensure proper module structure
 RUN touch /apps/__init__.py
 RUN touch /apps/tests/__init__.py
-</file>
-
-<file path="pipelinebase/requirements.txt">
-duckdb==1.2.2
-minio==7.2.15
-pandas==2.2.3
-psycopg2-binary==2.9.10
-pytest==8.3.5
-pytest-mock==3.14.0
-requests==2.32.3
-ruff==0.11.9
-</file>
-
-<file path="sonnets/healthcare/medicare-claims-synthetic-public-use-files/README.md">
-# Medicare Claims Synthetic Public Use Files (SynPUFs)
-Source: https://www.cms.gov/data-research/statistics-trends-and-reports/medicare-claims-synthetic-public-use-files
-</file>
-
-<file path="sonnets/README.md">
-
-</file>
-
-<file path="pytest.ini">
-[pytest]
-pythonpath = pythonbase
 </file>
 
 <file path="jupyterbase/Dockerfile">
@@ -897,7 +1081,7 @@ COPY pgduckdb_connect.ipynb /apps/pgduckdb_connect.ipynb
 EXPOSE 8888
 
 # Start Jupyter notebook
-CMD ["/venv/bin/jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+CMD ["/venv/bin/jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--ServerApp.token=", "--ServerApp.password="]
 </file>
 
 <file path=".gitignore">
