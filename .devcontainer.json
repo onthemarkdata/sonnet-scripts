@@ -17,7 +17,5 @@
 			]
 		}
 	},
-	"postCreateCommand": [
-		"sh", "-c", "make setup && echo 'Sonnet Scripts dev container setup complete!'"
-	]
+	"postCreateCommand": "echo 'Sonnet Scripts dev container setup complete!'"
 }
