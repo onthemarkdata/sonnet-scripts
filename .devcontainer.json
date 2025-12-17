@@ -2,7 +2,7 @@
 	"name": "Sonnet Scripts Dev Container",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "pythonbase",
-	"initializeCommand": ["/bin/sh", "-c", "docker compose build linuxbase"],
+	"initializeCommand": ["/bin/sh", "-c", "docker compose build linuxbase && docker compose build pythonbase"],
 	"workspaceFolder": "/workspaces/sonnet-scripts",
 	"mounts": [
     "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
