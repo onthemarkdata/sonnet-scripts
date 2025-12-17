@@ -2,10 +2,7 @@
 	"name": "Sonnet Scripts Dev Container",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "pythonbase",
-	"initializeCommand": [
-		"docker compose build linuxbase",
-		"docker compose build pythonbase"
-	],
+	"initializeCommand": "docker compose build linuxbase && docker compose build pythonbase",
 	"workspaceFolder": "/workspaces/Sonnet-Scripts",
 	"extensions": [
 		"ms-python.python"
