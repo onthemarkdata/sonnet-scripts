@@ -3,14 +3,17 @@
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "pythonbase",
 	"initializeCommand": ["/bin/sh", "-c", "docker compose build linuxbase && docker compose build pythonbase"],
-	"workspaceFolder": "/workspaces/Sonnet-Scripts",
-	"extensions": [
-		"ms-python.python"
-	],
-	"remoteUser": "sonnet-scripts",
+	"workspaceFolder": "/workspaces/sonnet-scripts",
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python"
+			]
+		}
+	},
 	"postCreateCommand": [
 		"make setup",
-        "make install-cli",
+		"make install-cli",
 		"echo 'Sonnet Scripts dev container setup complete!'"
-    ]
+	]
 }
