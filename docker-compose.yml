@@ -1,11 +1,5 @@
 services:
 
-  linuxbase:
-    build:
-      context: ./linuxbase
-    container_name: linuxbase
-    image: linuxbase
-
   pythonbase:
     build:
       context: ./pythonbase
@@ -61,6 +55,12 @@ services:
       - DBT_TARGET=dev
     volumes:
       - dbt_data:/apps/data
+
+  linuxbase:
+    build:
+      context: ./linuxbase
+    container_name: linuxbase
+    image: linuxbase
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
