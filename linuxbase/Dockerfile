@@ -36,7 +36,7 @@ COPY --from=builder /bin/bash /usr/local/bin/
 
 # Install runtime dependencies if necessary
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    locales ca-certificates && \
+    locales ca-certificates make git && \
     locale-gen en_US.UTF-8 && \
     rm -rf /var/lib/apt/lists/*
 
