@@ -13,7 +13,6 @@
 	},
 	"postCreateCommand": [
 		"make setup",
-		"make install-cli",
 		"echo 'Sonnet Scripts dev container setup complete!'"
 	]
 }
