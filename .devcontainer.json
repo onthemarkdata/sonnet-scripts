@@ -2,19 +2,9 @@
 	"name": "Sonnet Scripts Dev Container",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "pythonbase",
+	"initializeCommand": ["/bin/sh", "-c", "docker compose build linuxbase && docker compose build pythonbase"],
 	"workspaceFolder": "/workspaces/sonnet-scripts",
-	"mounts": [
-    "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
-	],
-	"features": {
-		"ghcr.io/devcontainers/features/docker-outside-of-docker:1": {}
-	},
-	"customizations": {
-		"vscode": {
-			"extensions": [
-				"ms-python.python"
-			]
-		}
-	},
-	"postCreateCommand": "echo 'Sonnet Scripts dev container setup complete!'"
+	"mounts": ["source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"],
+	"customizations": {"vscode": {"extensions": ["ms-python.python"]}},
+	"postCreateCommand": ["echo 'Sonnet Scripts dev container setup complete!'"]
 }
