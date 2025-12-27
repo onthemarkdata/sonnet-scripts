@@ -16,9 +16,5 @@
 			]
 		}
 	},
-	"postCreateCommand": [
-		"/bin/sh",
-		"-c",
-		"docker compose build linuxbase && docker compose build pythonbase && docker compose up"
-	]
+	"postCreateCommand": "echo 'Sonnet Scripts dev container setup complete!'"
 }
