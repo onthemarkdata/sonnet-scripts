@@ -51,3 +51,4 @@ docker-compose.override.yml
 .*
 !.gitignore
 !.github/
+!.devcontainer.json
