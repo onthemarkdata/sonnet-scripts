@@ -1,6 +1,9 @@
+# Check if Docker is available
+check-docker:
+	@docker compose version >/dev/null 2>&1 || (echo "Error: Docker Compose is not available." >&2 && exit 1)
+
 # Set up the project with Docker Compose
-setup:
-	@docker compose build linuxbase
+setup: check-docker
 	@docker compose build pythonbase
 	@docker compose build pipelinebase
 	@docker compose build dbtbase
@@ -21,7 +24,6 @@ rebuild:
 # Completely clean up Docker environment and rebuild containers from scratch
 rebuild-clean:
 	@docker compose down -v --remove-orphans --rmi all
-	@docker compose build --no-cache linuxbase
 	@docker compose build --no-cache pythonbase
 	@docker compose build --no-cache pipelinebase
 	@docker compose build --no-cache dbtbase
@@ -65,10 +67,6 @@ else ifeq ($(OS),Windows_NT)
 else
 	xdg-open "http://localhost:8978"
 endif
-
-# Execute a shell inside the linuxbase container
-exec-linuxbase:
-	@docker compose exec linuxbase bash
 
 # Load data into PostgreSQL
 load-db:
