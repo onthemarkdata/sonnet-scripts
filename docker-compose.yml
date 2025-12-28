@@ -5,12 +5,15 @@ services:
       context: ./pythonbase
     container_name: pythonbase
     image: pythonbase
-    depends_on:
-      linuxbase:
-        condition: service_completed_successfully
+    stdin_open: true
+    tty: true
     ports:
       - "4213:4213"
-      
+    volumes:
+      - .:/workspaces/sonnet-scripts
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /workspaces/sonnet-scripts
+
   jupyterbase:
     build:
       context: ./jupyterbase
@@ -55,12 +58,6 @@ services:
       - DBT_TARGET=dev
     volumes:
       - dbt_data:/apps/data
-
-  linuxbase:
-    build:
-      context: ./linuxbase
-    container_name: linuxbase
-    image: linuxbase
 
   pgduckdb:
     image: pgduckdb/pgduckdb:17-v0.1.0
@@ -121,24 +118,10 @@ services:
       - 9000:9000
     command: ["server", "/data", "--console-address", ":9001"]
 
-  cloudbeaver:
-    image: dbeaver/cloudbeaver:25.0.3
-    container_name: cloudbeaver
-    ports:
-      - "8978:8978"
-    volumes:
-      - cloudbeaver-data:/opt/cloudbeaver/workspace
-      - ./cloudbeaver/conf/.cloudbeaver.auto.conf:/opt/cloudbeaver/conf/.cloudbeaver.auto.conf
-      - ./cloudbeaver/conf/.cloudbeaver.runtime.conf:/opt/cloudbeaver/workspace/.data/.cloudbeaver.runtime.conf
-    depends_on:
-      - pgduckdb
-
 volumes:
   pgduckdb_data:
    driver: local
   data:
    driver: local
-  cloudbeaver-data:
-    driver: local
   dbt_data:
     driver: local
