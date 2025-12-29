@@ -10,9 +10,9 @@ services:
     ports:
       - "4213:4213"
     volumes:
-      - .:/workspaces/sonnet-scripts
+      - .:/sonnet-scripts
       - /var/run/docker.sock:/var/run/docker.sock
-    working_dir: /workspaces/sonnet-scripts
+    working_dir: /sonnet-scripts
 
   jupyterbase:
     build:
