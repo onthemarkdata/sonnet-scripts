@@ -19,5 +19,31 @@
 				"ms-python.python"
 			]
 		}
+	},
+	"forwardPorts": [8888, 8080, 9001, 9000, 5432],
+	"portsAttributes": {
+		"8888": {
+			"label": "Jupyter Lab",
+			"onAutoForward": "openBrowser",
+			"visibility": "public"
+		},
+		"8080": {
+			"label": "pgAdmin",
+			"onAutoForward": "openBrowser",
+			"visibility": "public"
+		},
+		"9001": {
+			"label": "MinIO Console",
+			"onAutoForward": "openBrowser",
+			"visibility": "public"
+		},
+		"9000": {
+			"label": "MinIO API",
+			"visibility": "public"
+		},
+		"5432": {
+			"label": "Postgres/DuckDB",
+			"visibility": "public"
+		}
 	}
 }
