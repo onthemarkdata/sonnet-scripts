@@ -1,9 +1,7 @@
 # Set up the project with Docker Compose
 setup:
-	@docker compose build pythonbase
-	@docker compose build pipelinebase
-	@docker compose build dbtbase
-	@docker compose build
+	@docker compose ps pythonbase --format json | grep -q pythonbase || docker compose build pythonbase
+	@docker compose build $$(docker compose config --services | grep -v pythonbase)
 	@docker compose up -d
 
 # Install the sonnet CLI tool
