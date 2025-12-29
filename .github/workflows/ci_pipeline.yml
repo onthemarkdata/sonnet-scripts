@@ -27,7 +27,6 @@ jobs:
 
       - name: Build Docker Images
         run: |
-          docker build -t linuxbase linuxbase
           docker build -t pythonbase pythonbase
 
       - name: Start Docker Compose
