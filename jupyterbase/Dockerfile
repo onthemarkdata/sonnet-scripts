@@ -1,4 +1,4 @@
-FROM pythonbase:latest
+FROM pythonbase
 
 # Set the Working Directory
 WORKDIR /apps

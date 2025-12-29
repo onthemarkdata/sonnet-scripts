@@ -1,10 +1,7 @@
 # Set up the project with Docker Compose
 setup:
-	@docker compose build linuxbase
-	@docker compose build pythonbase
-	@docker compose build pipelinebase
-	@docker compose build dbtbase
-	@docker compose build
+	@docker compose ps pythonbase --format json | grep -q pythonbase || docker compose build pythonbase
+	@docker compose build $$(docker compose config --services | grep -v pythonbase)
 	@docker compose up -d
 
 # Install the sonnet CLI tool
@@ -21,7 +18,6 @@ rebuild:
 # Completely clean up Docker environment and rebuild containers from scratch
 rebuild-clean:
 	@docker compose down -v --remove-orphans --rmi all
-	@docker compose build --no-cache linuxbase
 	@docker compose build --no-cache pythonbase
 	@docker compose build --no-cache pipelinebase
 	@docker compose build --no-cache dbtbase
@@ -65,10 +61,6 @@ else ifeq ($(OS),Windows_NT)
 else
 	xdg-open "http://localhost:8978"
 endif
-
-# Execute a shell inside the linuxbase container
-exec-linuxbase:
-	@docker compose exec linuxbase bash
 
 # Load data into PostgreSQL
 load-db:

@@ -1,42 +1,42 @@
-FROM linuxbase AS pythonbase
+FROM python:3.12
+
+# Set environment variables for localization and timezone settings
+ENV LANG=en_US.UTF-8 \
+    LANGUAGE=en_US:en \
+    LC_ALL=en_US.UTF-8 \
+    TZ="America/Chicago" \
+    DEBIAN_FRONTEND=noninteractive
 
 RUN mkdir /apps
 
 # Set build arguments for cross-compilation
 ARG TARGETARCH
-
-# Set environment variables
-ENV PATH=/venv/bin:$PATH \
-    PATH=/root/.cargo/bin:$PATH \
-    PATH="/root/.local/bin/:$PATH"
-
-# Install uv, curl, and the PostgreSQL client (`psql`)
-RUN apt-get update && apt-get install -y ca-certificates curl postgresql-client unzip
-
-# Download UV and MinIO Client (mc) based on architecture
-RUN if [ "$TARGETARCH" = "amd64" ]; then \
-        curl -LsSf https://astral.sh/uv/install.sh | sh \
-        && curl -O https://dl.min.io/client/mc/release/linux-amd64/mc \
-        && chmod +x mc \
-        && mv mc /usr/local/bin/; \
-    elif [ "$TARGETARCH" = "arm64" ]; then \
-        curl -LsSf https://astral.sh/uv/install.sh | sh \
-        && curl -O https://dl.min.io/client/mc/release/linux-arm64/mc \
-        && chmod +x mc \
-        && mv mc /usr/local/bin/; \
-    else \
-        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
-    fi
-
-# Install DuckDB
 ARG DUCKDB_VERSION="v1.2.2"
 
-RUN set -eux; \
-    apt-get update && apt-get install -y --no-install-recommends \
-        curl ca-certificates gzip && \
-    rm -rf /var/lib/apt/lists/* && \
-    # pick the correct pre‑built binary for the platform
-    if [ "$TARGETARCH" = "amd64" ]; then \
+# Set environment variables
+ENV PATH=/root/.local/bin:/venv/bin:$PATH
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    postgresql-client gzip curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Install UV (Python package manager)
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Install MinIO client (architecture-specific)
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
+        curl -O https://dl.min.io/client/mc/release/linux-amd64/mc; \
+    elif [ "$TARGETARCH" = "arm64" ]; then \
+        curl -O https://dl.min.io/client/mc/release/linux-arm64/mc; \
+    else \
+        echo "Unsupported architecture: $TARGETARCH" && exit 1; \
+    fi && \
+    chmod +x mc && \
+    mv mc /usr/local/bin/mc
+
+# Install DuckDB CLI (architecture-specific)
+RUN if [ "$TARGETARCH" = "amd64" ]; then \
         DUCKDB_DIST="linux-amd64"; \
     elif [ "$TARGETARCH" = "arm64" ]; then \
         DUCKDB_DIST="linux-arm64"; \
@@ -44,24 +44,17 @@ RUN set -eux; \
         echo "Unsupported architecture: $TARGETARCH" && exit 1; \
     fi && \
     curl -fsSL "https://github.com/duckdb/duckdb/releases/download/${DUCKDB_VERSION}/duckdb_cli-${DUCKDB_DIST}.gz" \
-      | gunzip -c > /usr/local/bin/duckdb && \
+        | gunzip -c > /usr/local/bin/duckdb && \
     chmod +x /usr/local/bin/duckdb && \
-    duckdb --version   # quick sanity check
+    duckdb --version
 
-# Set up a virtual env to use for whatever app is destined for this container.
+# Create Python virtual environment
 RUN uv venv --python 3.12.6 /venv && \
-    echo "\nsource /venv/bin/activate\n" >> /root/.zshrc && \
-    uv --version
-
-# Copy application-specific files
-COPY requirements.txt /apps/requirements.txt
-
-# Run install of requirements
-RUN . /venv/bin/activate && \
-    uv pip install --upgrade -r /apps/requirements.txt && \
-    uv pip install --upgrade granian[pname]
-
-RUN echo "We're good:" && \
     /venv/bin/python --version
 
+# Run install of requirements
+COPY requirements.txt /apps/requirements.txt
+RUN uv pip install --upgrade -r /apps/requirements.txt
+
+# Keep container running for interactive use
 CMD ["tail", "-f", "/dev/null"]
