@@ -5,6 +5,7 @@ services:
       context: ./pythonbase
     container_name: pythonbase
     image: pythonbase
+    pull_policy: never
     stdin_open: true
     tty: true
     ports:
@@ -19,6 +20,7 @@ services:
       context: ./jupyterbase
     container_name: jupyterbase
     image: jupyterbase
+    pull_policy: never
     depends_on:
       pythonbase:
         condition: service_started
@@ -32,6 +34,7 @@ services:
       context: ./pipelinebase
     container_name: pipelinebase
     image: pipelinebase
+    pull_policy: never
     depends_on:
       pythonbase:
         condition: service_started
@@ -45,6 +48,7 @@ services:
       context: ./dbtbase
     container_name: dbtbase
     image: dbtbase
+    pull_policy: never
     depends_on:
       pythonbase:
         condition: service_started
@@ -73,6 +77,8 @@ services:
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "postgres"]
       retries: 5
+      interval: 10s
+      timeout: 5s
 
   pgadmin:
     image: dpage/pgadmin4:9.3.0
