@@ -14,6 +14,12 @@ services:
       - .:/sonnet-scripts
       - /var/run/docker.sock:/var/run/docker.sock
     working_dir: /sonnet-scripts
+    healthcheck:
+      test: ["CMD", "python", "--version"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   jupyterbase:
     build:
@@ -23,7 +29,7 @@ services:
     pull_policy: never
     depends_on:
       pythonbase:
-        condition: service_started
+        condition: service_healthy
       pgduckdb:
         condition: service_healthy
     ports:
@@ -37,7 +43,7 @@ services:
     pull_policy: never
     depends_on:
       pythonbase:
-        condition: service_started
+        condition: service_healthy
       pgduckdb:
         condition: service_healthy
       minio:
@@ -51,7 +57,7 @@ services:
     pull_policy: never
     depends_on:
       pythonbase:
-        condition: service_started
+        condition: service_healthy
       pgduckdb:
         condition: service_healthy
     environment:

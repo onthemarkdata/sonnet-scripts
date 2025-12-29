@@ -1,9 +1,5 @@
-# Check if Docker is available
-check-docker:
-	@docker compose version >/dev/null 2>&1 || (echo "Error: Docker Compose is not available." >&2 && exit 1)
-
 # Set up the project with Docker Compose
-setup: check-docker
+setup:
 	@docker compose build pythonbase
 	@docker compose build pipelinebase
 	@docker compose build dbtbase
