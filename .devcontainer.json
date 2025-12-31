@@ -17,29 +17,23 @@
 		"vscode": {
 			"extensions": [
 				"ms-python.python"
-			],
-			"settings": {
-				"remote.portsAttributes": {
-					"8888": {
-						"label": "Jupyter Lab",
-						"onAutoForward": "openBrowser"
-					},
-					"8080": {
-						"label": "pgAdmin",
-						"onAutoForward": "openBrowser"
-					},
-					"9001": {
-						"label": "MinIO Console",
-						"onAutoForward": "openBrowser"
-					},
-					"5432": {
-						"label": "Postgres/DuckDB",
-						"onAutoForward": "openBrowser"
-					}
-				}
-			}
+			]
 		}
 	},
 	"forwardPorts": [8888, 8080, 9001, 5432],
-	"postCreateCommand": "make run-all-data-pipelines"
+	"postCreateCommand": "make run-all-data-pipelines",
+	"portsAttributes": {
+		"8888": {
+			"label": "JupyterLab"
+		},
+		"8080": {
+			"label": "pgAdmin"
+		},
+		"9001": {
+			"label": "MinIO"
+		},
+		"5432": {
+			"label": "Postgres"
+		}
+	}
 }
