@@ -20,8 +20,6 @@
 			]
 		}
 	},
-	"forwardPorts": [8888, 8080, 9001, 5432],
-	"postCreateCommand": "make run-all-data-pipelines",
 	"portsAttributes": {
 		"8888": {
 			"label": "JupyterLab"
@@ -35,5 +33,7 @@
 		"5432": {
 			"label": "Postgres"
 		}
-	}
+	},
+	"forwardPorts": [8888, 8080, 9001, 5432],
+	"postCreateCommand": "make run-all-data-pipelines"
 }
